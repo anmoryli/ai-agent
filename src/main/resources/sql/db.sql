@@ -79,6 +79,13 @@ create table messages(
     foreign key (session_id) references sessions(session_id)
 );
 
+# 根据时间进行分区查询
+ALTER TABLE messages PARTITION BY RANGE (YEAR(create_time)) (
+    PARTITION p2023 VALUES LESS THAN (2024),
+    PARTITION p2024 VALUES LESS THAN (2025),
+    PARTITION p2025 VALUES LESS THAN (2026)
+    );
+
 insert into messages(session_id, sender_type, sender_id, message) values
     (1, 'user', 1, 'Hello, Agent1!'),
     (1, 'agent', 1, 'Hi, User1! How can I help you?'),

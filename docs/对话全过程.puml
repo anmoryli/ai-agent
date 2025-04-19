@@ -1,0 +1,13 @@
+@startuml
+用户 -> 服务器: 创建sessions
+服务器 -> 数据库: 保存sessions
+用户 -> 服务器: 创建agents
+服务器 -> 数据库: 保存agents
+用户 -> 服务器: agents加入sessions
+服务器 -> 数据库: 保存sessions和agents的对应关系
+用户 -> 服务器: 发送messages
+用户 -> 数据库: 保存messages
+服务器 -> 智能体: 发送messages
+智能体 -> 用户: 根据messages的内容发送messages
+智能体 -> 数据库: 保存messages
+@enduml
