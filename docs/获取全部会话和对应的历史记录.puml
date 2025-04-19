@@ -1,0 +1,5 @@
+@startuml
+用户 -> 服务器: 发送userId
+服务器 -> 用户: 获取userId对应的sessionId
+服务器 -> 用户: 获取每一个sessionId对应的messages
+@enduml

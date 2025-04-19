@@ -1,0 +1,46 @@
+@startuml
+class Agents {
+    private int agentId;
+    private int userId;
+    private String agentName;
+    private String agentRole;
+    private String description;
+    private Date createTime;
+    private Date updateTime;
+}
+
+class Messages {
+    private int messageId;
+    private int sessionId;
+    private String senderType;
+    private int senderId;
+    private String message;
+    private Date createTime;
+    private Date updateTime;
+}
+
+class SessionAgents {
+    private int sessionId;
+    private int agentId;
+    private Date joinedTime;
+}
+
+class Sessions {
+    private int sessionId;
+    private int userId;
+    private String title;
+    private Date createTime;
+    private Date updateTime;
+}
+
+class User {
+    private int userId;
+    private String userName;
+    private String password;
+    private Date birth;
+    private int sex;
+    private String email;
+    private Date createTime;
+    private Date updateTime;
+}
+@enduml

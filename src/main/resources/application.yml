@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: ai-agent
+  datasource:
+    url: jdbc:mysql://175.24.205.213:3306/ai-agent?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: username
+    password: lmjnb666
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  ai:
+    openai:
+      api-key: sk-hrKgm7Q2JhtPgTeoPaY9A83zOxhl0KKWXD0KTc73ru3M6zh8
+      base-url: https://hk.xty.app
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

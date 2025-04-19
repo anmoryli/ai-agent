@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流式显示</title>
+    <style>
+        #response {
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<h1>大模型回复：</h1>
+<div id="response"></div>
+
+<script>
+    const sessionId = '1';
+    const message = '你好';
+
+    // 创建 EventSource 对象，订阅流式数据
+    const eventSource = new EventSource(`/ai/stream?message=${encodeURIComponent(message)}&sessionId=${sessionId}`);
+
+    const responseDiv = document.getElementById('response');
+
+    // 监听数据流
+    eventSource.onmessage = function(event) {
+        const chunk = event.data; // 获取每一块数据
+
+        // 模拟打字机效果
+        typeWriter(chunk);
+    };
+
+    // 错误处理
+    eventSource.onerror = function() {
+        console.error('Stream error occurred.');
+        eventSource.close(); // 关闭连接
+    };
+
+    // 打字机效果函数
+    function typeWriter(text) {
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i < text.length) {
+                responseDiv.textContent += text.charAt(i);
+                i++;
+            } else {
+                clearInterval(interval); // 结束当前块的打字效果
+            }
+        }, 50); // 每 50 毫秒显示一个字符
+    }
+</script>
+</body>
+</html>

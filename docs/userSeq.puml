@@ -1,0 +1,7 @@
+@startuml
+
+用户 -> 服务器: 创建sessions和agents
+服务器 -> 智能体: 发送sessions和agents消息
+智能体 -> 用户: 根据sessions和agents的内容发送messages消息
+
+@enduml
