@@ -3,6 +3,8 @@ package com.anmory.aiagent.mapper;
 import com.anmory.aiagent.model.Agents;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 /**
  * @author Anmory/李梦杰
  * @description TODO
@@ -22,4 +24,7 @@ public interface AgentsMapper {
 
     @Select("select * from `ai-agent`.agents order by agent_id desc limit 1")
     Agents getLastAgentId();
+
+    @Select("select * from agents where agent_id in (select agent_id from `ai-agent`.session_agents where session_id = (select session_id from `ai-agent`.sessions where script_id = #{scriptId}))")
+    List<Agents> getAllAgentsOfScript(int scriptId);
 }

@@ -35,21 +35,40 @@ insert into agents(user_id, agent_name, agent_role, description) values
     (2, 'Agent3', 'Role3', 'Description3'),
     (2, 'Agent4', 'Role4', 'Description4');
 
+# 剧本表
+drop table if exists scripts;
+create table if not exists scripts(
+                                      script_id int auto_increment primary key not null ,
+                                      script_name varchar(200) unique,
+                                      script_content text,
+                                      result text not null ,
+                                      create_time datetime default now(),
+                                      update_time datetime on update now()
+);
+
+insert into scripts(script_name, script_content, result) values
+    ('Script1', 'This is the first script.', 'Result1'),
+    ('Script2', 'This is the second script.', 'Result2'),
+    ('Script3', 'This is the third script.', 'Result3'),
+    ('Script4', 'This is the fourth script.', 'Result4');
+
 drop table if exists sessions;
 create table sessions(
     session_id int auto_increment primary key not null ,
     user_id int not null ,
+    script_id int,
     title varchar(200),
     create_time datetime default now(),
     update_time datetime on update now(),
-    foreign key (user_id) references user_info(user_id)
+    foreign key (user_id) references user_info(user_id),
+    foreign key (script_id) references scripts(script_id)
 );
 
-insert into sessions(user_id, title) values
-    (1, 'Session1'),
-    (1, 'Session2'),
-    (2, 'Session3'),
-    (2, 'Session4');
+insert into sessions(user_id, script_id, title) values
+    (1, 1, 'Session1'),
+    (1, 2, 'Session2'),
+    (2, 3, 'Session3'),
+    (2, 4, 'Session4');
 
 drop table if exists session_agents;
 create table session_agents(
@@ -74,17 +93,12 @@ create table messages(
     sender_type enum('user', 'agent') not null ,
     sender_id int not null ,
     message text,
+    img_path varchar(200),
+    file_path varchar(200),
     create_time datetime default now(),
     update_time datetime on update now(),
     foreign key (session_id) references sessions(session_id)
 );
-
-# 根据时间进行分区查询
-ALTER TABLE messages PARTITION BY RANGE (YEAR(create_time)) (
-    PARTITION p2023 VALUES LESS THAN (2024),
-    PARTITION p2024 VALUES LESS THAN (2025),
-    PARTITION p2025 VALUES LESS THAN (2026)
-    );
 
 insert into messages(session_id, sender_type, sender_id, message) values
     (1, 'user', 1, 'Hello, Agent1!'),
@@ -92,6 +106,43 @@ insert into messages(session_id, sender_type, sender_id, message) values
     (1, 'user', 1, 'Can you show me how to use this system?'),
     (1, 'agent', 1, 'Of course, User1! Here are some instructions.'),
     (2, 'user', 2, 'Hello, Agent2!');
+
+drop table if exists clues;
+create table if not exists clues(
+    clue_id int auto_increment primary key not null ,
+    script_id int not null ,
+    clue_name varchar(200),
+    clue_content text,
+    is_locked int default 0,
+    unlock_condition text,
+    create_time datetime default now(),
+    update_time datetime on update now(),
+    foreign key (script_id) references scripts(script_id)
+);
+
+insert into clues(script_id, clue_name, clue_content) values
+    (1, 'Clue1', 'This is the first clue.'),
+    (1, 'Clue2', 'This is the second clue.'),
+    (2, 'Clue3', 'This is the third clue.'),
+    (2, 'Clue4', 'This is the fourth clue.');
+
+drop table if exists deductions;
+create table if not exists deductions(
+    deduction_id int auto_increment primary key not null ,
+    session_id int not null ,
+    deduction_name varchar(200),
+    deduction_content text,
+    is_final int default 0,
+    create_time datetime default now(),
+    update_time datetime on update now(),
+    foreign key (session_id) references sessions(session_id)
+);
+
+insert into deductions(session_id, deduction_name, deduction_content) values
+    (1, 'Deduction1', 'This is the first deduction.'),
+    (1, 'Deduction2', 'This is the second deduction.'),
+    (2, 'Deduction3', 'This is the third deduction.'),
+    (2, 'Deduction4', 'This is the fourth deduction.');
 
 # 插入前判断发送者ID是否存在
 create trigger validate_sender_id_before_insert

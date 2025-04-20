@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * @author Anmory/李梦杰
  * @description TODO
@@ -17,4 +19,7 @@ public interface SessionAgentsMapper {
 
     @Select("select * from `ai-agent`.session_agents order by joined_time desc limit 1")
     SessionAgents getLastSessionAgentId();
+
+    @Select("select * from `ai-agent`.session_agents where session_id = #{sessionId}")
+    List<SessionAgents> getAllSessionAgents(int sessionId);
 }

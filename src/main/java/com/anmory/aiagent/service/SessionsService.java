@@ -29,4 +29,8 @@ public class SessionsService {
     public Sessions getLastSessionId() {
         return sessionsMapper.getLastSessionId();
     }
+
+    public int insertSessionScript(int userId, int sessionId, int scriptId) {
+        return sessionsMapper.insertSessionScript(userId, sessionId, scriptId);
+    }
 }

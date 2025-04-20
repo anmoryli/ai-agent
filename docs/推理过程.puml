@@ -1,0 +1,9 @@
+@startuml
+玩家 -> Clues (获取“带血的匕首”)
+玩家 -> Messages (审问仆人)
+Clues -> Clues (解锁“仆人的证词”)
+玩家 -> Deductions (提交中间推理)
+Events -> Clues (解锁“隐藏的信件”)
+玩家 -> Deductions (提交最终推理)
+Scenarios -> Sessions (结束游戏)
+@enduml

@@ -13,6 +13,10 @@ spring:
       image:
         api-key: sk-hrKgm7Q2JhtPgTeoPaY9A83zOxhl0KKWXD0KTc73ru3M6zh8
         base-url: https://hk.xty.app
+      audio:
+        speech:
+          api-key: sk-hrKgm7Q2JhtPgTeoPaY9A83zOxhl0KKWXD0KTc73ru3M6zh8
+          base-url: https://hk.xty.app
 
 mybatis:
   configuration:

@@ -5,6 +5,8 @@ import com.anmory.aiagent.model.SessionAgents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Anmory/李梦杰
  * @description TODO
@@ -22,5 +24,9 @@ public class SessionAgentsService {
 
     public SessionAgents getLastSessionAgentId() {
         return sessionAgentsMapper.getLastSessionAgentId();
+    }
+
+    public List<SessionAgents> getAllSessionAgents(int sessionId) {
+        return sessionAgentsMapper.getAllSessionAgents(sessionId);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.ai.openai.OpenAiImageModel;
 import org.springframework.ai.openai.OpenAiImageOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -20,7 +21,7 @@ public class PicChatController {
     @Autowired
     OpenAiImageModel imageModel;
     @RequestMapping("/gPic")
-    public String gPic(String prompt) {
+    public String gPic(@RequestParam("prompt") String prompt) {
         ImageResponse response = imageModel.call(
                 new ImagePrompt(prompt,
                         OpenAiImageOptions.builder()

@@ -7,15 +7,15 @@ import java.util.Date;
 /**
  * @author Anmory/李梦杰
  * @description TODO
- * @date 2025-04-10 上午11:20
+ * @date 2025-04-20 上午10:37
  */
 
 @Data
-public class Sessions {
-    private int sessionId;
-    private int userId;
+public class Scripts {
     private int scriptId;
-    private String title;
+    private String scriptName;
+    private String scriptContent;
+    private String result;
     private Date createTime;
     private Date updateTime;
 }

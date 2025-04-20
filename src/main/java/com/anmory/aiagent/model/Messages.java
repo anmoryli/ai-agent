@@ -20,6 +20,8 @@ public class Messages {
     private String senderType;
     private int senderId;
     private String message;
+    private String imgPath;
+    private String filePath;
     private Date createTime;
     private Date updateTime;
 }

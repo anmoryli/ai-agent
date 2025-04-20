@@ -29,14 +29,7 @@ public class SessionController {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("session_user_key");
         sessionsService.insertSession(user.getUserId(), title);
-        Sessions lastSession = sessionsService.getLastSessionId();
-        Sessions sessions = new Sessions();
-        sessions.setTitle(title);
-        sessions.setSessionId(lastSession.getSessionId());
-        sessions.setUserId(user.getUserId());
-        sessions.setCreateTime(lastSession.getCreateTime());
-        sessions.setUpdateTime(lastSession.getUpdateTime());
-        return sessions;
+        return sessionsService.getLastSessionId();// 没有id，不是id
     }
 
     @RequestMapping("/getAllSessions")
