@@ -27,4 +27,13 @@ public interface AgentsMapper {
 
     @Select("select * from agents where agent_id in (select agent_id from `ai-agent`.session_agents where session_id = (select session_id from `ai-agent`.sessions where script_id = #{scriptId}))")
     List<Agents> getAllAgentsOfScript(int scriptId);
+
+    @Select("select * from agents where agent_id = #{agentId}")
+    Agents getAgentById(int agentId);
+
+    @Update("update `ai-agent`.agents set is_chose = 1,own_by=#{ownBy} where `ai-agent`.agents.agent_id=#{agentId}")
+    int setChose(int agentId,String ownBy);
+
+    @Select("select * from `ai-agent`.agents where is_chose = 0")
+    List<Agents> getNotChoseAgents();
 }

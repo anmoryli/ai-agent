@@ -37,4 +37,16 @@ public class AgentsService {
     public List<Agents> getAllAgentsOfScript(int scriptId) {
         return agentsMapper.getAllAgentsOfScript(scriptId);
     }
+
+    public Agents getAgentById(int agentId) {
+        return agentsMapper.getAgentById(agentId);
+    }
+
+    public int setChose(int agentId,String ownBy) {
+        return agentsMapper.setChose(agentId, ownBy);
+    }
+
+    public List<Agents> getNotChoseAgents() {
+        return agentsMapper.getNotChoseAgents();
+    }
 }

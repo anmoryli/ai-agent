@@ -17,6 +17,8 @@ public class Agents {
     private String agentName;
     private String agentRole;
     private String description;
+    private int isChose;
+    private String ownBy;
     private Date createTime;
     private Date updateTime;
 }

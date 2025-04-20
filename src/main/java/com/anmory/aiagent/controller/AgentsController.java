@@ -23,4 +23,19 @@ public class AgentsController {
     public List<Agents> getAllAgentsOfScript(int scriptId) {
         return agentsService.getAllAgentsOfScript(scriptId);
     }
+
+    @RequestMapping("/userChooseAgent")
+    public Agents userChooseAgent(int agentId) {
+        agentsService.setChose(agentId, "user");
+        return agentsService.getAgentById(agentId);
+    }
+
+    @RequestMapping("/aiChooseAgent")
+    public List<Agents> aiChooseAgent() {
+        List<Agents> agents = agentsService.getNotChoseAgents();
+        for(Agents agent : agents){
+            agentsService.setChose(agent.getAgentId(),"agent");
+        }
+        return agents;
+    }
 }

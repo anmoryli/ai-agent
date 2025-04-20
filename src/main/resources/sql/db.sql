@@ -24,6 +24,8 @@ create table agents(
     agent_name varchar(20) not null ,
     agent_role text,
     description text,
+    is_chose int default 0,
+    own_by enum('user', 'agent','null') default 'null',
     create_time datetime default now(),
     update_time datetime on update now(),
     foreign key (user_id) references user_info(user_id)
@@ -150,9 +152,9 @@ create trigger validate_sender_id_before_insert
     for each row
     begin
         if new.sender_type = 'user' and not exists (select 1 from user_info where user_id = new.sender_id) then
-            signal sqlstate '45000' set message_text = 'Invalid sender_id for user_type';
+            signal sqlstate '45000' set message_text = '没有这个用户/智能体';
         elseif new.sender_type = 'agent' and not exists (select 1 from agents where agent_id = new.sender_id) then
-            signal sqlstate '45000' set message_text = 'Invalid sender_id for agent_type';
+            signal sqlstate '45000' set message_text = '没有这个用户/智能体';
         end if;
     end;
 
@@ -162,9 +164,9 @@ create trigger validate_sender_id_before_update
     for each row
     begin
         if new.sender_type = 'user' and not exists (select 1 from user_info where user_id = new.sender_id) then
-            signal sqlstate '45000' set message_text = 'Invalid sender_id for user_type';
+            signal sqlstate '45000' set message_text = '没有这个用户/智能体';
         elseif new.sender_type = 'agent' and not exists (select 1 from agents where agent_id = new.sender_id) then
-            signal sqlstate '45000' set message_text = 'Invalid sender_id for agent_type';
+            signal sqlstate '45000' set message_text = '没有这个用户/智能体';
         end if;
     end;
 
