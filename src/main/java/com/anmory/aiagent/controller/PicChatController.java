@@ -24,6 +24,7 @@ public class PicChatController {
     OpenAiImageModel imageModel;
     @RequestMapping("/gPic")
     public String gPic(@RequestParam("prompt") String prompt) {
+        log.info("提示词是prompt: {}", prompt);
         ImageResponse response = imageModel.call(
                 new ImagePrompt(prompt,
                         OpenAiImageOptions.builder()

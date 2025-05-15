@@ -31,6 +31,9 @@ public interface AgentsMapper {
             "join `ai-agent`.scripts on scripts.session_id = sessions.session_id")
     List<Agents> getAllAgentsOfScript(int scriptId);
 
+    @Select("select * from agents")
+    List<Agents> getAllAgents();
+
     @Select("select * from agents where agent_id = #{agentId}")
     Agents getAgentById(int agentId);
 

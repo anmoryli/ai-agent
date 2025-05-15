@@ -148,6 +148,16 @@ insert into deductions(session_id, deduction_name, deduction_content) values
     (2, 'Deduction3', 'This is the third deduction.'),
     (2, 'Deduction4', 'This is the fourth deduction.');
 
+drop table if exists message_single;
+create table if not exists message_single(
+    message_id int not null primary key auto_increment,
+    sender_id int not null,
+    receiver_id int not null,
+    message text not null,
+    create_time datetime default now(),
+    update_time datetime on update now()
+);
+
 # 插入前判断发送者ID是否存在
 create trigger validate_sender_id_before_insert
     before insert on messages

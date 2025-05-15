@@ -1,6 +1,7 @@
 package com.anmory.aiagent.mapper;
 
 import com.anmory.aiagent.model.Clues;
+import com.anmory.aiagent.model.Scripts;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -27,4 +28,16 @@ public interface CluesMapper {
     @Select("select * from `ai-agent`.clues where script_id = #{scriptId}")
     List<Clues> getCluesByScriptId(int scriptId);
 
+    @Select("select * from `ai-agent`.clues where clue_name = #{clueName}")
+    Clues getCluesByName(String clueName);
+
+    @Update("update `ai-agent`.clues set is_locked = 0")
+    int locakAllClues();
+
+    @Select("select * from `ai-agent`.scripts " +
+            "where script_id = (select script_id from `ai-agent`.clues where clue_id = #{clueId})")
+    Scripts getScriptsByClueId(int clueId);
+
+    @Select("select * from `ai-agent`.scripts where script_name = #{scriptName} limit 1")
+    Scripts getScriptsByScriptName(String scriptName);
 }

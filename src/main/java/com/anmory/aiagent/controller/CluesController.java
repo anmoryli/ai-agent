@@ -21,6 +21,8 @@ import java.util.List;
 public class CluesController {
     @Autowired
     CluesService cluesService;
+    @Autowired
+    ChatController chatController;
 
     @RequestMapping("/getCluesBySessionId")
     public List<Clues> getCluesBySessionId(int sessionId) {
@@ -38,5 +40,27 @@ public class CluesController {
             cluesService.updateLock(clue.getClueId());
         }
         return clues;
+    }
+
+    @RequestMapping("/lockAllClues")
+    public int lockAllClues() {
+        log.info("清空线索状态成功");
+        return cluesService.locakAllClues();
+    }
+
+    @RequestMapping("/checkClueUnlocked")
+    public List<Clues> checkClueUnlocked(List<Clues> clues) {
+        for (Clues clue : clues) {
+            if (clue.getIsLocked() == 0) {
+                cluesService.updateLock(clue.getClueId());
+            }
+        }
+        return clues;
+    }
+
+    @RequestMapping("/clearAllClues")
+    public int clearAllClues() {
+        log.info("清空线索状态成功");
+        return cluesService.locakAllClues();
     }
 }

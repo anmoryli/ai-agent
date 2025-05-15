@@ -42,6 +42,10 @@ public class AgentsService {
         return agentsMapper.getAgentById(agentId);
     }
 
+    public List<Agents> getAllAgents() {
+        return agentsMapper.getAllAgents();
+    }
+
     public int setChose(int agentId,String ownBy) {
         return agentsMapper.setChose(agentId, ownBy);
     }

@@ -32,6 +32,14 @@ public class SessionController {
         return sessionsService.getLastSessionId();// 没有id，不是id
     }
 
+    @RequestMapping("/deleteSession")
+    public int deleteSession(HttpServletRequest request,
+                             @RequestParam int sessionId){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("session_user_key");
+        return sessionsService.deleteSession(sessionId);
+    }
+
     @RequestMapping("/getAllSessions")
     public List<Sessions> getAllSessions(HttpServletRequest request){
         HttpSession session = request.getSession();

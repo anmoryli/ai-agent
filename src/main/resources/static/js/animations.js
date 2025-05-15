@@ -55,6 +55,12 @@ function createEnhancedParticle(container) {
   const opacity = Math.random() * 0.7 + 0.3 // 增加透明度
   particle.style.opacity = opacity
 
+  // 随机颜色
+  const colors = ["var(--primary-color)", "var(--primary-light)", "var(--secondary-color)", "var(--secondary-light)"]
+  const color = colors[Math.floor(Math.random() * colors.length)]
+  particle.style.backgroundColor = color
+  particle.style.boxShadow = `0 0 5px ${color}`
+
   // 随机动画
   const duration = Math.random() * 20 + 10
   const delay = Math.random() * 5
@@ -813,4 +819,48 @@ function addTypewriterEffect(element, text, speed = 100) {
   }
 
   typeWriter()
+}
+
+// 添加更多动画效果
+
+// 添加烟花效果
+function createFirework() {
+  const firework = document.createElement("div")
+  firework.style.position = "fixed"
+  firework.style.width = "5px"
+  firework.style.height = "5px"
+  firework.style.borderRadius = "50%"
+  firework.style.backgroundColor = getRandomColor()
+  firework.style.boxShadow = `0 0 10px ${getRandomColor()}`
+  firework.style.pointerEvents = "none"
+  firework.style.zIndex = "1000"
+
+  // 随机位置
+  const posX = Math.random() * window.innerWidth
+  const posY = Math.random() * window.innerHeight
+  firework.style.left = `${posX}px`
+  firework.style.top = `${posY}px`
+
+  // 添加动画
+  firework.style.animation = "explosion 1s forwards"
+
+  document.body.appendChild(firework)
+
+  // 移除元素
+  setTimeout(() => {
+    firework.remove()
+  }, 1000)
+}
+
+// 获取随机颜色
+function getRandomColor() {
+  const colors = [
+    "#c23757", // 主色
+    "#e05a7a", // 浅色
+    "#8e2a40", // 深色
+    "#d4af37", // 次要色
+    "#f0cd5d", // 浅次要色
+    "#a88c29", // 深次要色
+  ]
+  return colors[Math.floor(Math.random() * colors.length)]
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +9,14 @@
     <link rel="stylesheet" href="css/animations.css">
     <script src="js/jquery.min.js"></script>
 </head>
+
 <body class="dark-theme">
     <div class="particles-container">
         <div id="particles"></div>
     </div>
-    
+
     <div class="mystery-pattern"></div>
-    
+
     <div class="main-container">
         <header class="main-header">
             <div class="logo">
@@ -33,7 +35,7 @@
                 <button id="logout-btn" class="btn btn-outline">退出</button>
             </div>
         </header>
-        
+
         <div class="content-container">
             <div class="sidebar">
                 <div class="sidebar-header">
@@ -45,7 +47,7 @@
                 <div class="sessions-list" id="sessions-list">
                     <!-- 会话列表将通过JS动态加载 -->
                 </div>
-                
+
                 <div class="sidebar-header mt-4">
                     <h3>剧本列表</h3>
                     <button id="new-script-btn" class="btn btn-icon">
@@ -55,7 +57,7 @@
                 <div class="scripts-list" id="scripts-list">
                     <!-- 剧本列表将通过JS动态加载 -->
                 </div>
-                
+
                 <div class="sidebar-header mt-4">
                     <h3>角色列表</h3>
                     <button id="new-agent-btn" class="btn btn-icon">
@@ -66,7 +68,7 @@
                     <!-- 角色列表将通过JS动态加载 -->
                 </div>
             </div>
-            
+
             <div class="main-content">
                 <div class="welcome-screen" id="welcome-screen">
                     <div class="welcome-animation">
@@ -77,7 +79,7 @@
                     <p>选择一个现有会话或创建新会话开始体验</p>
                     <button id="create-session-btn" class="btn btn-primary">创建新会话</button>
                 </div>
-                
+
                 <div class="create-session-modal" id="create-session-modal">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -103,7 +105,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="create-script-modal" id="create-script-modal">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -131,7 +133,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="create-agent-modal" id="create-agent-modal">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -159,7 +161,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="add-agent-modal" id="add-agent-modal">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -179,15 +181,30 @@
                 </div>
             </div>
         </div>
+        <nav class="bottom-nav mobile-only">
+            <a href="#sessions" class="nav-item active" data-tab="sessions">
+                <span class="icon-session"></span>
+                <span>会话</span>
+            </a>
+            <a href="#scripts" class="nav-item" data-tab="scripts">
+                <span class="icon-script"></span>
+                <span>剧本</span>
+            </a>
+            <a href="#agents" class="nav-item" data-tab="agents">
+                <span class="icon-agent"></span>
+                <span>角色</span>
+            </a>
+        </nav>
     </div>
-    
+
     <div class="notification" id="notification">
         <div class="notification-content">
             <span id="notification-message"></span>
         </div>
     </div>
-    
+
     <script src="js/main.js"></script>
     <script src="js/animations.js"></script>
 </body>
+
 </html>

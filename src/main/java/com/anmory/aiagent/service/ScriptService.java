@@ -29,4 +29,12 @@ public class ScriptService {
     public List<Scripts> getScripts() {
         return scriptsMapper.getScripts();
     }
+
+    public int insertScripts(int sessionId, String scriptName, String scriptContent, String result) {
+        return scriptsMapper.insertScripts(sessionId, scriptName, scriptContent, result);
+    }
+
+    public int deleteScript(String scriptName) {
+        return scriptsMapper.deleteScript(scriptName);
+    }
 }

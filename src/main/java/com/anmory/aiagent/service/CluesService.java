@@ -2,6 +2,7 @@ package com.anmory.aiagent.service;
 
 import com.anmory.aiagent.mapper.CluesMapper;
 import com.anmory.aiagent.model.Clues;
+import com.anmory.aiagent.model.Scripts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +29,21 @@ public class CluesService {
 
     public int updateLock(int clueId) {
         return clusterMapper.updateLock(clueId);
+    }
+
+    public Clues getCluesByName(String clueName) {
+        return clusterMapper.getCluesByName(clueName);
+    }
+
+    public int locakAllClues() {
+        return clusterMapper.locakAllClues();
+    }
+
+    public Scripts getScriptsByScriptName(String scriptName) {
+        return clusterMapper.getScriptsByScriptName(scriptName);
+    }
+
+    public Scripts getScriptsByClueId(int clueId) {
+        return clusterMapper.getScriptsByClueId(clueId);
     }
 }

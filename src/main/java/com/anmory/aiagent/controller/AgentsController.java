@@ -24,6 +24,16 @@ public class AgentsController {
         return agentsService.getAllAgentsOfScript(scriptId);
     }
 
+    @RequestMapping("/deleteAgents")
+    public int deleteAgents(int agentId) {
+        return agentsService.deleteAgent(agentId);
+    }
+
+    @RequestMapping("/getAllAgents")
+    public List<Agents> getAllAgents() {
+        return agentsService.getAllAgents();
+    }
+
     @RequestMapping("/createAgent")
     public Agents createAgent(int userId, String agentName, String agentRole, String description) {
         agentsService.insertAgent(userId, agentName, agentRole, description);
@@ -53,5 +63,10 @@ public class AgentsController {
             agentsService.setChose(agent.getAgentId(),"agent");
         }
         return agents;
+    }
+
+    @RequestMapping("/getAgentById")
+    public Agents getAgentById(int agentId) {
+        return agentsService.getAgentById(agentId);
     }
 }

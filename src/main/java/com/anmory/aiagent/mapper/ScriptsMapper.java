@@ -1,6 +1,8 @@
 package com.anmory.aiagent.mapper;
 
 import com.anmory.aiagent.model.Scripts;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -22,4 +24,11 @@ public interface ScriptsMapper {
 
     @Select("select * from scripts")
     List<Scripts> getScripts();
+
+    @Delete("delete from scripts where script_name = #{scriptName}")
+    int deleteScript(String scriptName);
+
+    @Insert("insert into scripts(scripts.session_id,script_name,script_content,result) values " +
+            "(#{sessionId},#{scriptName},#{scriptContent},#{result})")
+    int insertScripts(int sessionId, String scriptName, String scriptContent, String result);
 }

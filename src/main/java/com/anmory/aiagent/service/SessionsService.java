@@ -33,4 +33,8 @@ public class SessionsService {
     public int insertSessionScript(int userId, int sessionId) {
         return sessionsMapper.insertSessionScript(userId, sessionId);
     }
+
+    public int deleteSession(int sessionId) {
+        return sessionsMapper.deleteSession(sessionId);
+    }
 }

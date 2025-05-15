@@ -1,10 +1,7 @@
 package com.anmory.aiagent.mapper;
 
 import com.anmory.aiagent.model.Sessions;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -27,4 +24,7 @@ public interface SessionsMapper {
 
     @Update("update `ai-agent`.sessions set `ai-agent`.sessions.user_id = #{userId} where `ai-agent`.sessions.session_id=#{sessionId}")
     int insertSessionScript(int userId, int sessionId);
+
+    @Delete("delete from sessions where session_id = #{sessionId}")
+    int deleteSession(int sessionId);
 }
