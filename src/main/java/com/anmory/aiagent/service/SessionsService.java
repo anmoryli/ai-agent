@@ -30,7 +30,7 @@ public class SessionsService {
         return sessionsMapper.getLastSessionId();
     }
 
-    public int insertSessionScript(int userId, int sessionId, int scriptId) {
-        return sessionsMapper.insertSessionScript(userId, sessionId, scriptId);
+    public int insertSessionScript(int userId, int sessionId) {
+        return sessionsMapper.insertSessionScript(userId, sessionId);
     }
 }

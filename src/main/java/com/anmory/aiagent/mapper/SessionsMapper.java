@@ -25,6 +25,6 @@ public interface SessionsMapper {
     @Select("select * from sessions order by create_time desc limit 1")
     Sessions getLastSessionId();
 
-    @Update("update `ai-agent`.sessions set `ai-agent`.sessions.user_id = #{userId} , script_id=#{scriptId} where `ai-agent`.sessions.session_id=#{sessionId}")
-    int insertSessionScript(int userId, int sessionId, int scriptId);
+    @Update("update `ai-agent`.sessions set `ai-agent`.sessions.user_id = #{userId} where `ai-agent`.sessions.session_id=#{sessionId}")
+    int insertSessionScript(int userId, int sessionId);
 }

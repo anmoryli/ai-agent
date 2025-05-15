@@ -5,6 +5,8 @@ import com.anmory.aiagent.model.Scripts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Anmory/李梦杰
  * @description TODO
@@ -22,5 +24,9 @@ public class ScriptService {
 
     public Scripts selectLastScripts() {
         return scriptsMapper.selectLastScripts();
+    }
+
+    public List<Scripts> getScripts() {
+        return scriptsMapper.getScripts();
     }
 }

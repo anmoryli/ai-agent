@@ -4,6 +4,8 @@ import com.anmory.aiagent.model.Scripts;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * @author Anmory/李梦杰
  * @description TODO
@@ -17,4 +19,7 @@ public interface ScriptsMapper {
 
     @Select("select * from scripts order by create_time desc limit 1")
     Scripts selectLastScripts();
+
+    @Select("select * from scripts")
+    List<Scripts> getScripts();
 }

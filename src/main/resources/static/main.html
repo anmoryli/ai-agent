@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI推理剧本系统 - 主页</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <script src="js/jquery.min.js"></script>
+</head>
+<body class="dark-theme">
+    <div class="particles-container">
+        <div id="particles"></div>
+    </div>
+    
+    <div class="mystery-pattern"></div>
+    
+    <div class="main-container">
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-text">AI推理</span>
+                <div class="logo-animation"></div>
+            </div>
+            <div class="user-info">
+                <span id="user-name"></span>
+                <div class="theme-toggle">
+                    <input type="checkbox" id="theme-switch">
+                    <label for="theme-switch" class="theme-switch-label">
+                        <span class="theme-icon moon"></span>
+                        <span class="theme-icon sun"></span>
+                    </label>
+                </div>
+                <button id="logout-btn" class="btn btn-outline">退出</button>
+            </div>
+        </header>
+        
+        <div class="content-container">
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h3>我的会话</h3>
+                    <button id="new-session-btn" class="btn btn-icon">
+                        <span class="icon-plus"></span>
+                    </button>
+                </div>
+                <div class="sessions-list" id="sessions-list">
+                    <!-- 会话列表将通过JS动态加载 -->
+                </div>
+                
+                <div class="sidebar-header mt-4">
+                    <h3>剧本列表</h3>
+                    <button id="new-script-btn" class="btn btn-icon">
+                        <span class="icon-plus"></span>
+                    </button>
+                </div>
+                <div class="scripts-list" id="scripts-list">
+                    <!-- 剧本列表将通过JS动态加载 -->
+                </div>
+                
+                <div class="sidebar-header mt-4">
+                    <h3>角色列表</h3>
+                    <button id="new-agent-btn" class="btn btn-icon">
+                        <span class="icon-plus"></span>
+                    </button>
+                </div>
+                <div class="agents-list" id="agents-list">
+                    <!-- 角色列表将通过JS动态加载 -->
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="welcome-screen" id="welcome-screen">
+                    <div class="welcome-animation">
+                        <div class="welcome-circle"></div>
+                        <div class="welcome-text">AI推理</div>
+                    </div>
+                    <h1>欢迎使用AI推理剧本系统</h1>
+                    <p>选择一个现有会话或创建新会话开始体验</p>
+                    <button id="create-session-btn" class="btn btn-primary">创建新会话</button>
+                </div>
+                
+                <div class="create-session-modal" id="create-session-modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>创建新会话</h3>
+                            <button class="close-modal-btn">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="create-session-form">
+                                <div class="form-group">
+                                    <label for="session-title">会话标题</label>
+                                    <input type="text" id="session-title" name="title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="script-select">选择剧本</label>
+                                    <select id="script-select" name="scriptId">
+                                        <!-- 剧本选项将通过JS动态加载 -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">创建</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="create-script-modal" id="create-script-modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>创建新剧本</h3>
+                            <button class="close-modal-btn">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="create-script-form">
+                                <div class="form-group">
+                                    <label for="script-name">剧本名称</label>
+                                    <input type="text" id="script-name" name="scriptName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="script-content">剧本内容</label>
+                                    <textarea id="script-content" name="scriptContent" rows="6" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="script-result">剧本结果</label>
+                                    <textarea id="script-result" name="result" rows="4" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">创建</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="create-agent-modal" id="create-agent-modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>创建新角色</h3>
+                            <button class="close-modal-btn">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="create-agent-form">
+                                <div class="form-group">
+                                    <label for="agent-name">角色名称</label>
+                                    <input type="text" id="agent-name" name="agentName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="agent-role">角色身份</label>
+                                    <input type="text" id="agent-role" name="agentRole" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="agent-description">角色描述</label>
+                                    <textarea id="agent-description" name="description" rows="4" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">创建</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="add-agent-modal" id="add-agent-modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>添加角色到会话</h3>
+                            <button class="close-modal-btn">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="selected-session-id">
+                            <div class="agent-select-list" id="agent-select-list">
+                                <!-- 角色选择列表将通过JS动态加载 -->
+                            </div>
+                            <div class="form-group">
+                                <button id="add-agents-btn" class="btn btn-primary">添加所选角色</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <span id="notification-message"></span>
+        </div>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script src="js/animations.js"></script>
+</body>
+</html>

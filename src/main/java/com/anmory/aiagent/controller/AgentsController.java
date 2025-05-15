@@ -24,6 +24,22 @@ public class AgentsController {
         return agentsService.getAllAgentsOfScript(scriptId);
     }
 
+    @RequestMapping("/createAgent")
+    public Agents createAgent(int userId, String agentName, String agentRole, String description) {
+        agentsService.insertAgent(userId, agentName, agentRole, description);
+        // 获取最后一个agentId
+        Agents lastAgentId = agentsService.getLastAgentId();
+        Agents agents = new Agents();
+        agents.setAgentId(lastAgentId.getAgentId());
+        agents.setUserId(userId);
+        agents.setAgentName(agentName);
+        agents.setAgentRole(agentRole);
+        agents.setDescription(description);
+        agents.setCreateTime(lastAgentId.getCreateTime());
+        agents.setUpdateTime(lastAgentId.getUpdateTime());
+        return agents;
+    }
+
     @RequestMapping("/userChooseAgent")
     public Agents userChooseAgent(int agentId) {
         agentsService.setChose(agentId, "user");

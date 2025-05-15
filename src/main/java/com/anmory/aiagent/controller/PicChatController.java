@@ -1,5 +1,6 @@
 package com.anmory.aiagent.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.ai.image.ImageResponse;
 import org.springframework.ai.openai.OpenAiImageModel;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2025-04-19 下午11:34
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/pic")
 public class PicChatController {
@@ -30,6 +32,7 @@ public class PicChatController {
                                 .withHeight(1024)
                                 .withWidth(1024).build())
         );
+        log.info("生成图像的地址: {}", response.getResult().getOutput().getUrl());
         return response.getResult().getOutput().getUrl();
     }
 }

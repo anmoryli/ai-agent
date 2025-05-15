@@ -37,40 +37,42 @@ insert into agents(user_id, agent_name, agent_role, description) values
     (2, 'Agent3', 'Role3', 'Description3'),
     (2, 'Agent4', 'Role4', 'Description4');
 
+drop table if exists sessions;
+create table sessions(
+                         session_id int auto_increment primary key not null ,
+                         user_id int not null ,
+                         title varchar(200),
+                         create_time datetime default now(),
+                         update_time datetime on update now(),
+                         foreign key (user_id) references user_info(user_id)
+);
+
+insert into sessions(user_id, title) values
+                                         (1, '测试1'),
+                                         (1, '测试2'),
+                                         (1, '测试3'),
+                                         (1, '测试4');
+
 # 剧本表
 drop table if exists scripts;
 create table if not exists scripts(
                                       script_id int auto_increment primary key not null ,
+                                      session_id int not null,
                                       script_name varchar(200) unique,
                                       script_content text,
-                                      result text not null ,
+                                      result text not null,
                                       create_time datetime default now(),
-                                      update_time datetime on update now()
+                                      update_time datetime on update now(),
+                                      foreign key (session_id) references sessions(session_id)
 );
 
-insert into scripts(script_name, script_content, result) values
-    ('Script1', 'This is the first script.', 'Result1'),
-    ('Script2', 'This is the second script.', 'Result2'),
-    ('Script3', 'This is the third script.', 'Result3'),
-    ('Script4', 'This is the fourth script.', 'Result4');
-
-drop table if exists sessions;
-create table sessions(
-    session_id int auto_increment primary key not null ,
-    user_id int not null ,
-    script_id int,
-    title varchar(200),
-    create_time datetime default now(),
-    update_time datetime on update now(),
-    foreign key (user_id) references user_info(user_id),
-    foreign key (script_id) references scripts(script_id)
-);
-
-insert into sessions(user_id, script_id, title) values
-    (1, 1, 'Session1'),
-    (1, 2, 'Session2'),
-    (2, 3, 'Session3'),
-    (2, 4, 'Session4');
+insert into scripts(script_id, session_id, script_name, script_content, result, create_time, update_time) VALUES
+                                                                                                              (1, 1, 'script1', 'script1', 'result1', '2023-05-01 12:00:00', '2023-05-01 12:00:00'),
+                                                                                                              (2, 1, 'script2', 'script2', 'result2', '2023-05-01 12:00:00', '2023-05-01 12:00:00'),
+                                                                                                               (3, 1, 'script3', 'script3', 'result3', '2023-05-01 12:00:00', '2023-05-01 12:00:00'),
+                                                                                                               (4, 1, 'script4', 'script4', 'result4', '2023-05-01 12:00:00', '2023-05-01 12:00:00'),
+                                                                                                               (5, 1, 'script5', 'script5', 'result5', '2023-05-01 12:00:00', '2023-05-01 12:00:00'),
+                                                                                                               (6, 1, 'script6', 'script6', 'result6', '2023-05-01 12:00:00', '2023-05-01 12:00:00');
 
 drop table if exists session_agents;
 create table session_agents(

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * @author Anmory/李梦杰
  * @description TODO
@@ -34,7 +36,12 @@ public class ScriptController {
         Scripts script = scriptService.selectLastScripts();
         Sessions sessions = sessionsService.getLastSessionId();
         // 把剧本更新到会话中
-        sessionsService.insertSessionScript(user.getUserId(),sessions.getSessionId(), script.getScriptId());
+        sessionsService.insertSessionScript(user.getUserId(),sessions.getSessionId());
         return script;
+    }
+
+    @RequestMapping("/getScripts")
+    public List<Scripts> getScripts() {
+        return scriptService.getScripts();
     }
 }

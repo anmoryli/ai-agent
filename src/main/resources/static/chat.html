@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI推理剧本系统 - 聊天</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <script src="js/jquery.min.js"></script>
+</head>
+<body class="dark-theme">
+    <div class="chat-background">
+        <div class="background-overlay"></div>
+        <img id="scene-background" src="/placeholder.svg" alt="场景背景">
+    </div>
+    
+    <div class="chat-container">
+        <header class="chat-header">
+            <div class="back-button" id="back-button">
+                <span class="icon-back"></span>
+            </div>
+            <div class="chat-title">
+                <h2 id="session-title">会话标题</h2>
+                <span id="script-name" class="script-name">剧本名称</span>
+            </div>
+            <div class="header-actions">
+                <div class="theme-toggle">
+                    <input type="checkbox" id="theme-switch">
+                    <label for="theme-switch" class="theme-switch-label">
+                        <span class="theme-icon moon"></span>
+                        <span class="theme-icon sun"></span>
+                    </label>
+                </div>
+                <button id="clues-btn" class="btn btn-icon">
+                    <span class="icon-clue"></span>
+                </button>
+                <button id="deduction-btn" class="btn btn-icon">
+                    <span class="icon-deduction"></span>
+                </button>
+            </div>
+        </header>
+        
+        <div class="chat-content">
+            <div class="messages-container" id="messages-container">
+                <!-- 消息将通过JS动态加载 -->
+            </div>
+            
+            <div class="input-container">
+                <textarea id="message-input" placeholder="输入消息..." rows="1"></textarea>
+                <button id="send-btn" class="btn btn-primary">
+                    <span class="icon-send"></span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="clues-panel" id="clues-panel">
+            <div class="panel-header">
+                <h3>线索列表</h3>
+                <button class="close-panel-btn">&times;</button>
+            </div>
+            <div class="panel-content">
+                <div class="clues-tabs">
+                    <div class="tab active" data-tab="current-clues">当前线索</div>
+                    <div class="tab" data-tab="all-clues">所有线索</div>
+                </div>
+                
+                <div class="clues-list" id="current-clues">
+                    <!-- 当前线索将通过JS动态加载 -->
+                </div>
+                
+                <div class="clues-list" id="all-clues" style="display: none;">
+                    <!-- 所有线索将通过JS动态加载 -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="deduction-panel" id="deduction-panel">
+            <div class="panel-header">
+                <h3>推理记录</h3>
+                <button class="close-panel-btn">&times;</button>
+            </div>
+            <div class="panel-content">
+                <div class="deductions-list" id="deductions-list">
+                    <!-- 推理记录将通过JS动态加载 -->
+                </div>
+                
+                <div class="new-deduction">
+                    <h4>添加新推理</h4>
+                    <form id="new-deduction-form">
+                        <div class="form-group">
+                            <input type="text" id="deduction-name" placeholder="推理标题" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="deduction-content" placeholder="推理内容..." rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="is-final">
+                                <label for="is-final">最终推理</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">提交推理</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="clue-unlock-animation" id="clue-unlock-animation">
+        <div class="unlock-content">
+            <div class="unlock-icon"></div>
+            <h3>线索解锁</h3>
+            <p id="unlocked-clue-name"></p>
+        </div>
+    </div>
+    
+    <div class="deduction-success-animation" id="deduction-success-animation">
+        <div class="success-content">
+            <div class="success-icon"></div>
+            <h3>推理成功</h3>
+            <p>恭喜你成功解开谜题！</p>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <span id="notification-message"></span>
+        </div>
+    </div>
+    
+    <script src="js/chat.js"></script>
+    <script src="js/animations.js"></script>
+</body>
+</html>
