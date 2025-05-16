@@ -49,6 +49,13 @@ public class ScriptController {
         return script.getScriptContent();
     }
 
+    @RequestMapping("/getScriptSingle")
+    public Scripts getScriptSingle(@RequestParam String scriptName) {
+        Scripts script = scriptService.selectScriptsBySessionName(scriptName);
+        log.info("[获取剧本内容]剧本内容:"+scriptName+",scriptContent:"+script.getScriptContent());
+        return script;
+    }
+
     @RequestMapping("/deleteScript")
     public int deleteScript(@RequestParam String scriptName) {
         return scriptService.deleteScript(scriptName);

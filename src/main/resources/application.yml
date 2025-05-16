@@ -8,18 +8,21 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   ai:
     openai:
-      api-key: sk-Lf43HULS25rPLbjE2WyId3bfeVYBbLRrLKZVdHxf11fMsOde
-      base-url: https://hk.xty.app
+      api-key: sk-fuacnJoLzVOp55Mq5PIFnpuYYemqwLDNdiyO8zW0j2fFZprd
+      base-url: https://api.xty.app
       image:
-        api-key: sk-Lf43HULS25rPLbjE2WyId3bfeVYBbLRrLKZVdHxf11fMsOde
-        base-url: https://hk.xty.app
+        api-key: sk-fuacnJoLzVOp55Mq5PIFnpuYYemqwLDNdiyO8zW0j2fFZprd
+        base-url: https://api.xty.app
       audio:
         speech:
-          api-key: sk-Lf43HULS25rPLbjE2WyId3bfeVYBbLRrLKZVdHxf11fMsOde
-          base-url: https://hk.xty.app
+          api-key: sk-fuacnJoLzVOp55Mq5PIFnpuYYemqwLDNdiyO8zW0j2fFZprd
+          base-url: https://api.xty.app
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
   port: 8086
+  servlet:
+    session:
+      timeout: PT876000H

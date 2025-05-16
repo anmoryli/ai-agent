@@ -31,4 +31,8 @@ public interface ScriptsMapper {
     @Insert("insert into scripts(scripts.session_id,script_name,script_content,result) values " +
             "(#{sessionId},#{scriptName},#{scriptContent},#{result})")
     int insertScripts(int sessionId, String scriptName, String scriptContent, String result);
+
+    @Insert("insert into scripts(scripts.session_id,script_name,script_content,result) values " +
+            "(#{scriptId},#{scriptName},#{scriptContent},#{result})")
+    int insertScriptToSession(int scriptId, int sessionId, String scriptName, String scriptContent, String result);
 }

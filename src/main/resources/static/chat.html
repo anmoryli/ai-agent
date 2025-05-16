@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,16 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/animations.css">
     <script src="js/jquery.min.js"></script>
+    <link rel="stylesheet" href="/js/github-dark.min.css">
+    <script src="/js/highlight.min.js"></script>
 </head>
+
 <body class="dark-theme">
     <div class="chat-background">
         <div class="background-overlay"></div>
         <img id="scene-background" src="/placeholder.svg" alt="场景背景">
     </div>
-    
+
     <div class="chat-container">
         <header class="chat-header">
             <div class="back-button" id="back-button">
@@ -24,30 +28,30 @@
                 <span id="script-name" class="script-name">剧本名称</span>
             </div>
             <div class="header-actions">
-    <button id="view-script-btn" class="btn btn-icon" title="查看剧本">
-        <span class="icon-script"></span>
-    </button>
-    <div class="theme-toggle">
-        <input type="checkbox" id="theme-switch">
-        <label for="theme-switch" class="theme-switch-label">
-            <span class="theme-icon moon"></span>
-            <span class="theme-icon sun"></span>
-        </label>
-    </div>
-    <button id="clues-btn" class="btn btn-icon">
-        <span class="icon-clue"></span>
-    </button>
-    <button id="deduction-btn" class="btn btn-icon">
-        <span class="icon-deduction"></span>
-    </button>
-</div>
+                <button id="view-script-btn" class="btn btn-icon" title="查看剧本">
+                    <span class="icon-script"></span>
+                </button>
+                <div class="theme-toggle">
+                    <input type="checkbox" id="theme-switch">
+                    <label for="theme-switch" class="theme-switch-label">
+                        <span class="theme-icon moon"></span>
+                        <span class="theme-icon sun"></span>
+                    </label>
+                </div>
+                <button id="clues-btn" class="btn btn-icon">
+                    <span class="icon-clue"></span>
+                </button>
+                <button id="deduction-btn" class="btn btn-icon">
+                    <span class="icon-deduction"></span>
+                </button>
+            </div>
         </header>
-        
+
         <div class="chat-content">
             <div class="messages-container" id="messages-container">
                 <!-- 消息将通过JS动态加载 -->
             </div>
-            
+
             <div class="input-container">
                 <textarea id="message-input" placeholder="输入消息..." rows="1"></textarea>
                 <button id="send-btn" class="btn btn-primary">
@@ -55,7 +59,7 @@
                 </button>
             </div>
         </div>
-        
+
         <div class="clues-panel" id="clues-panel">
             <div class="panel-header">
                 <h3>线索列表</h3>
@@ -64,19 +68,18 @@
             <div class="panel-content">
                 <div class="clues-tabs">
                     <div class="tab active" data-tab="current-clues">当前线索</div>
-                    <div class="tab" data-tab="all-clues">所有线索</div>
+                    <!-- <div class="tab" data-tab="all-clues">所有线索</div> -->
                 </div>
-                
                 <div class="clues-list" id="current-clues">
                     <!-- 当前线索将通过JS动态加载 -->
                 </div>
-                
+
                 <div class="clues-list" id="all-clues" style="display: none;">
                     <!-- 所有线索将通过JS动态加载 -->
                 </div>
             </div>
         </div>
-        
+
         <div class="deduction-panel" id="deduction-panel">
             <div class="panel-header">
                 <h3>推理记录</h3>
@@ -86,7 +89,7 @@
                 <div class="deductions-list" id="deductions-list">
                     <!-- 推理记录将通过JS动态加载 -->
                 </div>
-                
+
                 <div class="new-deduction">
                     <h4>添加新推理</h4>
                     <form id="new-deduction-form">
@@ -110,7 +113,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="clue-unlock-animation" id="clue-unlock-animation">
         <div class="unlock-content">
             <div class="unlock-icon"></div>
@@ -118,7 +121,7 @@
             <p id="unlocked-clue-name"></p>
         </div>
     </div>
-    
+
     <div class="deduction-success-animation" id="deduction-success-animation">
         <div class="success-content">
             <div class="success-icon"></div>
@@ -126,7 +129,7 @@
             <p>恭喜你成功解开谜题！</p>
         </div>
     </div>
-    
+
     <div class="notification" id="notification">
         <div class="notification-content">
             <span id="notification-message"></span>
@@ -134,33 +137,39 @@
     </div>
 
     <div class="mystery-decoration"></div>
-    
-    <div class="script-panel" id="script-panel">
-    <div class="panel-header">
-        <h3>剧本内容</h3>
-        <button class="close-panel-btn">&times;</button>
-    </div>
-    <div class="panel-content">
-        <div class="script-content" id="script-content">
-            <!-- 剧本内容将通过JS动态加载 -->
-        </div>
-    </div>
-</div>
 
-<!-- 添加剧情结束动画 -->
-<div class="story-end-animation" id="story-end-animation">
-    <div class="end-content">
-        <div class="end-icon"></div>
-        <h3>剧情结束</h3>
-        <p>恭喜你完成了这个剧本！</p>
-        <div class="end-actions">
-            <button id="restart-btn" class="btn btn-primary">重新开始</button>
-            <button id="back-to-main-btn" class="btn btn-outline">返回主页</button>
+    <div class="script-panel" id="script-panel">
+        <div class="panel-header">
+            <h3>剧本内容</h3>
+            <button class="close-panel-btn">&times;</button>
+        </div>
+        <div class="panel-content">
+            <div class="script-content" id="script-content">
+                <!-- 剧本内容将通过JS动态加载 -->
+            </div>
         </div>
     </div>
-</div>
-    
+
+    <!-- 添加剧情结束动画 -->
+    <div class="story-end-animation" id="story-end-animation">
+        <div class="end-content">
+            <div class="end-icon"></div>
+            <h3>剧情结束</h3>
+            <p>恭喜你完成了这个剧本！</p>
+            <div class="end-actions">
+                <button id="restart-btn" class="btn btn-primary">重新开始</button>
+                <button id="back-to-main-btn" class="btn btn-outline">返回主页</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/chat.js"></script>
     <script src="js/animations.js"></script>
+    <!-- Marked.js 用于解析 Markdown -->
+    <script src="/js/marked.min.js"></script>
+
+    <!-- DOMPurify 用于防止 XSS 攻击 -->
+    <script src="/js/purify.min.js"></script>
 </body>
+
 </html>

@@ -31,12 +31,6 @@ create table agents(
     foreign key (user_id) references user_info(user_id)
 );
 
-insert into agents(user_id, agent_name, agent_role, description) values
-    (1, 'Agent1', 'Role1', 'Description1'),
-    (1, 'Agent2', 'Role2', 'Description2'),
-    (2, 'Agent3', 'Role3', 'Description3'),
-    (2, 'Agent4', 'Role4', 'Description4');
-
 drop table if exists sessions;
 create table sessions(
                          session_id int auto_increment primary key not null ,
@@ -47,32 +41,20 @@ create table sessions(
                          foreign key (user_id) references user_info(user_id)
 );
 
-insert into sessions(user_id, title) values
-                                         (1, '测试1'),
-                                         (1, '测试2'),
-                                         (1, '测试3'),
-                                         (1, '测试4');
-
 # 剧本表
 drop table if exists scripts;
-create table if not exists scripts(
-                                      script_id int auto_increment primary key not null ,
-                                      session_id int not null,
-                                      script_name varchar(200) unique,
-                                      script_content text,
-                                      result text not null,
-                                      create_time datetime default now(),
-                                      update_time datetime on update now(),
-                                      foreign key (session_id) references sessions(session_id)
-);
-
-insert into scripts(script_id, session_id, script_name, script_content, result, create_time, update_time) VALUES
-                                                                                                              (1, 1, 'script1', 'script1', 'result1', '2023-05-01 12:00:00', '2023-05-01 12:00:00'),
-                                                                                                              (2, 1, 'script2', 'script2', 'result2', '2023-05-01 12:00:00', '2023-05-01 12:00:00'),
-                                                                                                               (3, 1, 'script3', 'script3', 'result3', '2023-05-01 12:00:00', '2023-05-01 12:00:00'),
-                                                                                                               (4, 1, 'script4', 'script4', 'result4', '2023-05-01 12:00:00', '2023-05-01 12:00:00'),
-                                                                                                               (5, 1, 'script5', 'script5', 'result5', '2023-05-01 12:00:00', '2023-05-01 12:00:00'),
-                                                                                                               (6, 1, 'script6', 'script6', 'result6', '2023-05-01 12:00:00', '2023-05-01 12:00:00');
+CREATE TABLE IF NOT EXISTS scripts (
+                                       script_id INT AUTO_INCREMENT NOT NULL,
+                                       session_id INT NOT NULL,
+                                       script_name VARCHAR(200) UNIQUE,
+                                       script_content TEXT,
+                                       result TEXT NOT NULL,
+                                       create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                       update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                       PRIMARY KEY (script_id),
+                                       UNIQUE (script_id, session_id),
+                                       FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 drop table if exists session_agents;
 create table session_agents(
@@ -83,12 +65,6 @@ create table session_agents(
     foreign key (session_id) references sessions(session_id),
     foreign key (agent_id) references agents(agent_id)
 );
-
-insert into session_agents(session_id, agent_id, joined_time) values
-    (1, 1, now()),
-    (1, 2, now()),
-    (2, 3, now()),
-    (2, 4, now());
 
 drop table if exists messages;
 create table messages(
@@ -104,13 +80,6 @@ create table messages(
     foreign key (session_id) references sessions(session_id)
 );
 
-insert into messages(session_id, sender_type, sender_id, message) values
-    (1, 'user', 1, 'Hello, Agent1!'),
-    (1, 'agent', 1, 'Hi, User1! How can I help you?'),
-    (1, 'user', 1, 'Can you show me how to use this system?'),
-    (1, 'agent', 1, 'Of course, User1! Here are some instructions.'),
-    (2, 'user', 2, 'Hello, Agent2!');
-
 drop table if exists clues;
 create table if not exists clues(
     clue_id int auto_increment primary key not null ,
@@ -124,12 +93,6 @@ create table if not exists clues(
     foreign key (script_id) references scripts(script_id)
 );
 
-insert into clues(script_id, clue_name, clue_content) values
-    (1, 'Clue1', 'This is the first clue.'),
-    (1, 'Clue2', 'This is the second clue.'),
-    (2, 'Clue3', 'This is the third clue.'),
-    (2, 'Clue4', 'This is the fourth clue.');
-
 drop table if exists deductions;
 create table if not exists deductions(
     deduction_id int auto_increment primary key not null ,
@@ -141,12 +104,6 @@ create table if not exists deductions(
     update_time datetime on update now(),
     foreign key (session_id) references sessions(session_id)
 );
-
-insert into deductions(session_id, deduction_name, deduction_content) values
-    (1, 'Deduction1', 'This is the first deduction.'),
-    (1, 'Deduction2', 'This is the second deduction.'),
-    (2, 'Deduction3', 'This is the third deduction.'),
-    (2, 'Deduction4', 'This is the fourth deduction.');
 
 drop table if exists message_single;
 create table if not exists message_single(
@@ -194,3 +151,46 @@ create trigger before_insert_session_agents
             set message_text = '主键重复，该会话下的智能体已经加入过对话了';
         end if;
     end;
+
+
+-- 插入会话
+INSERT INTO sessions (user_id, title) VALUES
+    (1, '午夜庄园谋杀案');
+
+-- 插入代理（角色）
+INSERT INTO agents (user_id, agent_name, agent_role, description, own_by) VALUES
+                                                                              (1, '艾伦·格雷', '私家侦探', '冷静、观察力敏锐，擅长分析线索。', 'user'),
+                                                                              (1, '玛丽·温莎', '贵族夫人', '优雅但心机深重，对庄园遗产虎视眈眈。', 'user'),
+                                                                              (1, '詹姆斯·布莱克', '退役军官', '与庄园主人有旧怨，最近争吵频繁。', 'user'),
+                                                                              (1, '莉莉·摩根', '庄园女仆', '行为神秘，似乎知道庄园主人的秘密。', 'user');
+
+-- 插入剧本
+INSERT INTO scripts (session_id, script_name, script_content, result) VALUES
+    (1, '午夜庄园谋杀案',
+     '1925年5月15日晚，庄园主人亨利·卡特在书房被发现死亡，胸口插着一把匕首。宾客们被困在庄园，暴风雨切断了对外联系。玩家需通过线索和对话找出真凶。',
+     '真凶是詹姆斯·布莱克。他因多年前与亨利的商业纠纷怀恨在心，趁晚宴后潜入书房，用匕首杀害了亨利。动机是报复和掩盖亨利即将公开的丑闻。');
+
+-- 插入线索
+INSERT INTO clues (script_id, clue_name, clue_content, is_locked, unlock_condition) VALUES
+                                                                                        (1, '染血的匕首', '书房地板上的匕首，刀柄上有“J.B.”的刻字。', 0, NULL),
+                                                                                        (1, '詹姆斯的争吵记录', '管家证词，詹姆斯在晚宴前与亨利激烈争吵，提到“旧账”。', 1, '玩家需在会话中提及“争吵”或“管家”。'),
+                                                                                        (1, '詹姆斯的日记', '詹姆斯房间的日记，记录了他对亨利的仇恨和计划。', 1, '玩家需在会话中提及“詹姆斯房间”或“日记”。');
+
+-- 插入会话中的代理
+INSERT INTO session_agents (session_id, agent_id) VALUES
+                                                      (1, 1), -- 艾伦·格雷
+                                                      (1, 2), -- 玛丽·温莎
+                                                      (1, 3), -- 詹姆斯·布莱克
+                                                      (1, 4); -- 莉莉·摩根
+
+-- 插入消息（模拟对话）
+INSERT INTO messages (session_id, sender_type, sender_id, message) VALUES
+                                                                       (1, 'user', 1, '谁最后见过亨利？'),
+                                                                       (1, 'agent', 1, '我看到詹姆斯在晚宴后走向书房。'),
+                                                                       (1, 'agent', 4, '我什么也没看到！'),
+                                                                       (1, 'user', 1, '詹姆斯的房间有什么可疑的东西吗？'),
+                                                                       (1, 'agent', 1, '我找到了一本日记，里面提到他对亨利的仇恨。');
+
+-- 插入推理
+INSERT INTO deductions (session_id, deduction_name, deduction_content, is_final) VALUES
+    (1, '最终结论', '詹姆斯是凶手，证据包括匕首刻字、争吵记录和日记。', 1);

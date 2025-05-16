@@ -37,4 +37,8 @@ public class ScriptService {
     public int deleteScript(String scriptName) {
         return scriptsMapper.deleteScript(scriptName);
     }
+
+    public int insertScriptToSession(int scriptId, int sessionId, String scriptName, String scriptContent, String result) {
+        return scriptsMapper.insertScriptToSession(scriptId, sessionId, scriptName, scriptContent, result);
+    }
 }

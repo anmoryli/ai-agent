@@ -1,15 +1,27 @@
 $(document).ready(() => {
+  // 初始化 marked 配置
+  marked.setOptions({
+    highlight: function (code, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        return hljs.highlight(code, { language: lang }).value;
+      } else {
+        return hljs.highlightAuto(code).value;
+      }
+    },
+    langPrefix: "hljs language-",
+  });
+
   // 检查登录状态
   checkLoginStatus();
 
   // 加载会话信息
   loadSessionInfo();
 
+  // 加载智能体会话信息
+  // loadAgentSessionInfo();
+
   // 加载聊天历史
   loadChatHistory();
-
-  // 加载线索
-  loadClues();
 
   // 加载推理记录
   loadDeductions();
@@ -61,7 +73,7 @@ $(document).ready(() => {
     sendMessage();
   });
 
-  // 按Enter键发送消息
+  // 按 Enter 键发送消息
   $("#message-input").keypress((e) => {
     if (e.which === 13 && !e.shiftKey) {
       e.preventDefault();
@@ -98,6 +110,9 @@ $(document).ready(() => {
 
   // 检查是否需要自动开始对话
   checkAutoStart();
+
+  // 获取剧本信息并加载线索
+  getScriptSingle();
 });
 
 // 检查登录状态
@@ -111,9 +126,31 @@ function checkLoginStatus() {
   }
 }
 
+// function loadCluesToSession() {
+//   const currentSession = JSON.parse(localStorage.getItem("currentSession"));
+//   const scriptName = localStorage.getItem("scriptName");
+//   $.ajax({
+//     url: "/clues/addClueToSession",
+//     type: "GET",
+//     data: {
+//       sessionId: currentSession.id,
+//       scriptName: scriptName,
+//     },
+//     success: (response) => {
+//       if (response && response.length > 0) {
+//         // 将线索信息存储到会话中
+//         localStorage.setItem("currentClues", JSON.stringify(response));
+//       } else {
+//         console.log("当前会话没有线索");
+//       }
+//     }
+//   });
+// }
+
 // 修改loadSessionInfo函数，区分智能体聊天和剧本会话
 function loadSessionInfo() {
   const currentSession = JSON.parse(localStorage.getItem("currentSession"));
+  console.log("[加载会话信息]当前会话信息:", currentSession);
 
   if (currentSession) {
     $("#session-title").text(currentSession.title);
@@ -123,7 +160,12 @@ function loadSessionInfo() {
       // 加载智能体信息
       const agent = JSON.parse(localStorage.getItem("currentAgent"));
       if (agent) {
-        $("#script-name").text(agent.agentRole || "角色");
+        // 显示智能体名称，最多20个字符，超出显示...
+        $("#script-name").text(
+          agent.agentRole && agent.agentRole.length > 20
+            ? agent.agentRole.slice(0, 20) + "..."
+            : agent.agentRole || "角色"
+        );
 
         // 生成智能体相关的背景图片
         generateAgentBackgroundImage(agent);
@@ -190,33 +232,45 @@ function loadChatHistory() {
 // 加载线索
 function loadClues() {
   const currentSession = JSON.parse(localStorage.getItem("currentSession"));
+  console.log("当前会话信息:", currentSession);
+  const scriptName = localStorage.getItem("scriptName");
+  console.log("[获取线索]当前剧本名称:", scriptName);
 
-  if (currentSession) {
-    // 加载当前会话的线索
-    $.ajax({
-      url: "/clues/getCluesBySessionId",
-      type: "GET",
-      data: {
-        sessionId: currentSession.id,
-      },
-      success: (response) => {
-        if (response && response.length > 0) {
-          renderClues(response, "#current-clues");
-        } else {
-          $("#current-clues").html('<p class="empty-list">暂无线索</p>');
-        }
-      },
-      error: () => {
-        showNotification("加载线索失败");
-      },
-    });
+  if (!currentSession || !scriptName) {
+    console.warn("缺少会话或剧本名称，无法加载线索");
+    $("#current-clues").html('<p class="empty-list">暂无线索</p>');
+    $("#all-clues").html('<p class="empty-list">暂无线索</p>');
+    showNotification("未选择剧本或会话，线索加载失败");
+    return;
+  }
 
-    // 加载剧本的所有线索
+  // 加载当前会话的线索
+  $.ajax({
+    url: "/clues/getCluesByScriptId",
+    type: "GET",
+    data: {
+      scriptName: scriptName,
+    },
+    success: (response) => {
+      if (response && response.length > 0) {
+        renderClues(response, "#current-clues");
+      } else {
+        $("#current-clues").html('<p class="empty-list">暂无线索</p>');
+      }
+    },
+    error: () => {
+      showNotification("加载线索失败");
+    },
+  });
+
+  // 加载剧本的所有线索
+  const scriptSingle = JSON.parse(localStorage.getItem("scriptSingle"));
+  if (scriptSingle && scriptSingle.scriptName) {
     $.ajax({
       url: "/clues/getCluesByScriptId",
       type: "GET",
       data: {
-        scriptId: 1, // 这里应该是动态获取的剧本ID
+        scriptName: scriptSingle.scriptName,
       },
       success: (response) => {
         if (response && response.length > 0) {
@@ -229,6 +283,9 @@ function loadClues() {
         showNotification("加载线索失败");
       },
     });
+  } else {
+    console.warn("缺少剧本信息，无法加载所有线索");
+    $("#all-clues").html('<p class="empty-list">暂无线索</p>');
   }
 }
 
@@ -321,15 +378,16 @@ function generateBackgroundImage() {
   );
 
   // 从本地存储的剧本信息中获取场景描述
-  const scriptContent = localStorage.getItem("scriptContent");
+  var scriptContent = localStorage.getItem("scriptContent");
   console.log("剧本内容(图像生成提示词):", scriptContent);
+  const agentInfo = JSON.parse(localStorage.getItem("currentAgent"));
   // 从后端获取当前智能体信息
   $.ajax({
-    url: "/agent/getAgentById",
+    url: "/agents/getAgentById",
     type: "GET",
     data: {
       // 从data-id按钮获取智能体ID
-      agentId: $("#send-btn").data("id"),
+      agentId: agentInfo.agentId
     },
     success: (response) => {
       console.log("获取智能体信息成功", response);
@@ -345,7 +403,7 @@ function generateBackgroundImage() {
     url: "/pic/gPic",
     type: "GET",
     data: {
-      prompt: agent.agentRole || "推理的场景",
+      prompt: scriptContent || "推理的场景",
     },
     success: (response) => {
       if (response) {
@@ -360,18 +418,21 @@ function generateBackgroundImage() {
 
 // 添加生成智能体背景图片的函数
 function generateAgentBackgroundImage(agent) {
+  console.log("生成智能体背景图片，当前智能体信息", agent);
   // 设置默认图片
   $("#scene-background").attr(
     "src",
     "https://source.unsplash.com/random/1920x1080/?detective"
   );
 
+  
+
   // 调用后端接口生成图片
   $.ajax({
     url: "/pic/gPic",
     type: "GET",
     data: {
-      prompt: agent.description || agent.agentRole || "detective character",
+      prompt: agent.agentRole || agent.description || "detective character",
     },
     success: (response) => {
       if (response) {
@@ -405,9 +466,7 @@ function checkAutoStart() {
     currentSession.autoStart &&
     !currentSession.isAgentChat
   ) {
-    // 如果是自动开始且不是智能体聊天，则自动发送一条消息
     setTimeout(() => {
-      // 显示AI正在输入的提示
       showTypingIndicator();
 
       // 获取剧本名称
@@ -421,8 +480,22 @@ function checkAutoStart() {
       // 获取会话ID
       const conId = localStorage.getItem("conId") || Date.now().toString();
       localStorage.setItem("conId", conId);
+      const scriptContent = localStorage.getItem("scriptContent");
+      console.log("剧本内容:", scriptContent);
 
-      // 从/script/getScriptContent后端接口获取剧本内容作为role
+      // 解析 scriptSingle
+      let scriptSingle;
+      try {
+        scriptSingle = JSON.parse(localStorage.getItem("scriptSingle"));
+      } catch (e) {
+        console.error("解析 scriptSingle 失败:", e);
+        removeTypingIndicator();
+        showNotification("剧本数据格式错误");
+        return;
+      }
+      console.log("单个剧本:", scriptSingle);
+
+      // 从 /script/getScriptContent 后端接口获取剧本内容作为 role
       $.ajax({
         url: "/script/getScriptContent",
         type: "GET",
@@ -432,31 +505,28 @@ function checkAutoStart() {
         success: (response) => {
           if (response) {
             localStorage.setItem("role", response);
-            localStorage.setItem("scriptContent", response); // 保存剧本内容
+            localStorage.setItem("scriptContent", response);
+            console.log("获取剧本内容成功:", response);
+            console.log("当前剧本名称(/ai/chat1):", scriptName);
 
-            // 请求AI回复，使用一个引导性的提示
+            // 请求 AI 回复
             $.ajax({
               url: "/ai/chat",
               type: "GET",
               data: {
                 message: "请开始引导这个剧本的故事",
-                scriptName: scriptName,
+                scriptName: scriptSingle.scriptName || scriptName, // 使用解析后的 scriptName，fallback 到 scriptName
                 sessionId: currentSession.id,
                 role: response || "你是一个推理助手",
-                conId: conId,
               },
               success: (aiResponse) => {
-                // 移除输入提示
+                console.log("AI回复自动引导剧情:", aiResponse);
                 removeTypingIndicator();
-
-                // 添加AI回复到界面
                 appendMessage(aiResponse);
                 scrollToBottom();
-
-                // 检查是否有新线索解锁
                 checkForNewClues();
 
-                // 移除自动开始标记，避免重复触发
+                // 移除自动开始标记
                 const updatedSession = JSON.parse(
                   localStorage.getItem("currentSession")
                 );
@@ -481,7 +551,7 @@ function checkAutoStart() {
           showNotification("加载剧本内容失败");
         },
       });
-    }, 1000); // 延迟1秒，让页面先加载完成
+    }, 1000);
   }
 }
 
@@ -491,6 +561,7 @@ function toggleScriptPanel() {
 
   // 加载剧本内容
   const scriptContent = localStorage.getItem("scriptContent");
+  console.log("剧本内容:", scriptContent);
   if (scriptContent) {
     $("#script-content").text(scriptContent);
   } else {
@@ -508,11 +579,11 @@ function toggleScriptPanel() {
             $("#script-content").text(response);
             localStorage.setItem("scriptContent", response);
           } else {
-            $("#script-content").text("无法加载剧本内容");
+            $("#script-content").text("未选择剧本");
           }
         },
         error: () => {
-          $("#script-content").text("加载剧本内容失败");
+          $("#script-content").text("未选择剧本");
         },
       });
     } else {
@@ -522,6 +593,42 @@ function toggleScriptPanel() {
 
   $("#script-panel").toggleClass("active");
 }
+
+// 获取剧本,接口是/script/getScripts
+function getScriptSingle() {
+  const scriptName = localStorage.getItem("scriptName");
+  console.log("当前选择的剧本名称：", scriptName);
+
+  if (!scriptName) {
+    console.warn("未找到当前选择的剧本");
+    showNotification("未选择剧本，请返回主页选择");
+    return;
+  }
+
+  $.ajax({
+    url: "/script/getScriptSingle",
+    type: "GET",
+    data: {
+      scriptName: scriptName,
+    },
+    success: (response) => {
+      if (response) {
+        console.log("获取单个剧本成功:", response);
+        localStorage.setItem("scriptSingle", JSON.stringify(response));
+        // 在获取剧本后加载线索
+        loadClues();
+      } else {
+        $("#script-list").html('<p class="empty-list">暂无剧本</p>');
+        showNotification("获取剧本信息失败");
+      }
+    },
+    error: () => {
+      showNotification("获取剧本信息失败");
+    },
+  });
+}
+
+getScriptSingle();
 
 // 关闭所有面板
 function closeAllPanels() {
@@ -583,19 +690,22 @@ function sendMessage() {
 
 // 添加发送消息给智能体的函数
 function sendMessageToAgent(message, sessionId) {
+  console.log("当前智能体ID:", $("#send-btn").data("id"));
+  const agentInfo = JSON.parse(localStorage.getItem("currentAgent"));
+  console.log("当前智能体信息:", agentInfo);
   // 从后端获取当前智能体信息
   $.ajax({
-    url: "/agent/getAgentById",
+    url: "/agents/getAgentById",
     type: "GET",
     data: {
       // 从data-id按钮获取智能体ID
-      agentId: $("#send-btn").data("id"),
+      agentId: agentInfo.agentId
     },
     success: (response) => {
       console.log("获取智能体信息成功", response);
       // 保存智能体信息到本地存储
       localStorage.setItem("currentAgent", JSON.stringify(response));
-    }
+    },
   });
   console.log(
     "当前本地智能体：",
@@ -624,6 +734,7 @@ function sendMessageToAgent(message, sessionId) {
   // 把sessionId变成int能存储的大小，不能超过int的范围
   sessionId = Number.parseInt(sessionId) % Math.pow(2, 31);
   console.log("当前会话ID:", sessionId);
+  console.log("单个智能体聊天:", agent.agentRole);
 
   // 请求AI回复，使用agent.agentRole作为role参数
   $.ajax({
@@ -674,6 +785,7 @@ function sendMessageToScript(message, sessionId) {
 
       // 获取剧本名称
       const scriptName = localStorage.getItem("scriptName");
+      console.log("当前剧本名称(是我导致的)", scriptName);
       if (!scriptName) {
         removeTypingIndicator();
         showNotification("未选择剧本，请返回主页选择剧本");
@@ -693,6 +805,8 @@ function sendMessageToScript(message, sessionId) {
           if (response) {
             localStorage.setItem("role", response);
             localStorage.setItem("scriptContent", response); // 保存剧本内容
+            console.log("获取剧本内容成功:", response);
+            console.log("当前剧本名称(/ai/chat2):", scriptName);
 
             // 请求AI回复
             $.ajax({
@@ -701,10 +815,12 @@ function sendMessageToScript(message, sessionId) {
               data: {
                 message: message,
                 sessionId: sessionId,
+                scriptName: scriptName,
                 role: response || "你是一个推理助手",
                 conId: conId,
               },
               success: (aiResponse) => {
+                console.log("AI Response:", aiResponse);
                 // 移除输入提示
                 removeTypingIndicator();
 
@@ -728,19 +844,19 @@ function sendMessageToScript(message, sessionId) {
               },
               error: () => {
                 removeTypingIndicator();
-                showNotification("获取AI回复失败");
+                showNotification("获取AI回复失败,是我导致的");
                 sendBtn.prop("disabled", false).css("opacity", "1");
               },
             });
           } else {
             removeTypingIndicator();
-            showNotification("加载剧本内容失败");
+            showNotification("加载剧本内容失败,请重新登陆");
             sendBtn.prop("disabled", false).css("opacity", "1");
           }
         },
         error: () => {
           removeTypingIndicator();
-          showNotification("加载剧本内容失败");
+          showNotification("加载剧本内容失败,请重新登陆");
           sendBtn.prop("disabled", false).css("opacity", "1");
         },
       });
@@ -758,10 +874,13 @@ function appendMessage(message) {
   const messagesContainer = $("#messages-container");
   const messageTime = formatTime(message.createTime);
 
+  // 使用 marked 将 Markdown 转换为 HTML，并用 DOMPurify 防止 XSS
+  const safeHTML = DOMPurify.sanitize(marked.parse(message.message));
+
   const messageElement = $(`
     <div class="message ${message.senderType}" data-id="${message.messageId}">
       <div class="message-content">
-        ${message.message}
+        ${safeHTML}
         ${
           message.senderType === "agent"
             ? '<button class="voice-btn" title="播放语音"></button>'
@@ -772,24 +891,22 @@ function appendMessage(message) {
     </div>
   `);
 
-  // 添加语音播放功能
+  messagesContainer.append(messageElement);
+
+  // 添加语音按钮逻辑
   if (message.senderType === "agent") {
     messageElement.find(".voice-btn").click(function () {
-      // 如果正在播放，不重复播放
-      if ($(this).hasClass("playing")) {
-        return;
-      }
-
+      if ($(this).hasClass("playing")) return;
       playVoice(message.message);
     });
   }
-
-  messagesContainer.append(messageElement);
 
   // 添加出现动画
   setTimeout(() => {
     messageElement.addClass("visible");
   }, 100);
+
+  scrollToBottom();
 }
 
 // 修改播放语音函数
@@ -848,23 +965,33 @@ function removeTypingIndicator() {
   $("#typing-indicator").remove();
 }
 
-// 检查是否有新线索解锁
+// 在 checkForNewClues 函数外部定义一个变量来保存上一次解锁的线索数量
+let lastUnlockedCount = 0;
+
 function checkForNewClues() {
   const currentSession = JSON.parse(localStorage.getItem("currentSession"));
 
+  const scriptSingle = JSON.parse(
+    localStorage.getItem("scriptSingle"));
+  console.log("我需要获取线索单个剧本:", scriptSingle);
+  console.log("我需要获取线索单个剧本剧本名称:", scriptSingle.scriptName);
   if (currentSession) {
     $.ajax({
-      url: "/clues/getCluesBySessionId",
+      url: "/clues/getCluesByScriptId",
       type: "GET",
       data: {
-        sessionId: currentSession.id,
+        scriptName: scriptSingle.scriptName
       },
       success: (response) => {
         if (response && response.length > 0) {
-          // 检查是否有新解锁的线索
+          // 只筛选已解锁的线索
           const unlockedClues = response.filter((clue) => clue.isLocked === 1);
 
-          if (unlockedClues.length > 0) {
+          // 如果当前解锁的线索数量大于上次记录的数量，说明有新线索解锁
+          if (unlockedClues.length > lastUnlockedCount) {
+            // 更新记录的解锁线索数量
+            lastUnlockedCount = unlockedClues.length;
+
             // 显示线索解锁动画
             showClueUnlockAnimation(unlockedClues[0]);
 

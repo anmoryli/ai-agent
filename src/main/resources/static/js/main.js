@@ -161,7 +161,7 @@ function loadSessions() {
       }
     },
     error: () => {
-      showNotification("加载会话列表失败");
+      showNotification("加载会话列表失败,请重新登陆");
     },
   });
 }
@@ -310,11 +310,8 @@ function loadAgents() {
 
 function loadAllAgents() {
   $.ajax({
-    url: "/agents/getAllAgentsOfScript",
+    url: "/agents/getAllAgents",
     type: "GET",
-    data: {
-      scriptId: 1, // 这里可以根据需要修改
-    },
     success: (response) => {
       if (response && response.length > 0) {
         const agentsList = $("#agents-list");
@@ -595,7 +592,7 @@ function createAgent() {
         closeModals();
 
         // 重新加载角色列表
-        // loadAgents()
+        loadAgents()
         loadAllAgents();
 
         showNotification("角色创建成功");

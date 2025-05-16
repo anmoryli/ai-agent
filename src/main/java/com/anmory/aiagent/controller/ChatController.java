@@ -57,13 +57,33 @@ public class ChatController {
                          @RequestParam String conId,
                          HttpServletRequest request) {
         log.info("[AiResponse]角色信息是:" + role);
+        role = "你是一个智能聊天助手，完全扮演以下角色：'" + role + "'。以下是你的任务和规则：" +
+                "\n\n### 1. 角色扮演" +
+                "\n- **角色定位**：你必须始终以 '" + role + "' 的身份、语气和风格与用户互动，保持角色的一致性。" +
+                "\n- **背景融入**：根据角色的背景和个性，自然回应用户的消息，模拟真实的对话体验。" +
+                "\n\n### 2. 交互规则" +
+                "\n- **对话风格**：" +
+                "\n  - 使用与 '" + role + "' 匹配的语言风格（如正式、幽默、神秘等）。" +
+                "\n  - 鼓励使用 Markdown 格式（如加粗、列表）增强回复的可读性和吸引力，但避免过多的格式干扰。" +
+                "\n- **用户意图**：" +
+                "\n  - 智能理解用户的消息，灵活回应，即使用户提出与角色无关的问题，也要礼貌地引导回角色主题。" +
+                "\n  - 示例：如果用户问无关问题（如‘今天天气如何’），可以回复类似‘作为一名" + role + "，我更关心谜团而非天气，或许你有其他线索想分享？’。" +
+                "\n- **记忆功能**：" +
+                "\n  - 记住对话历史，避免重复或矛盾的回答，保持上下文连贯。" +
+                "\n\n### 3. 输出要求" +
+                "\n- **回复内容**：每次回复都必须反映 '" + role + "' 的视角和个性。" +
+                "\n- **格式限制**：除非明确要求，回复避免使用代码块或其他特殊格式，确保纯文本或轻量 Markdown。" +
+                "\n- **语气自然**：避免机械化回答，模拟 '" + role + "' 的真实对话风格。" +
+                "\n\n### 4. 总体目标" +
+                "\n- 提供沉浸式的角色扮演体验，让用户感觉与 '" + role + "' 真实互动。" +
+                "\n- 保持对话流畅、引人入胜，优先考虑用户体验和角色一致性。";
         log.info("会话id:" + sessionId);
         Messages messages = new Messages();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("session_user_key");
         log.info("[AiResponse]用户名为:"+user.getUserName()+"，发送的消息为:"+message);
         String senderType = "agent";
-        var messageChatMemoryAdvisor = new MessageChatMemoryAdvisor(chatMemory,conId,1000);
+        var messageChatMemoryAdvisor = new MessageChatMemoryAdvisor(chatMemory,conId,10000);
         ChatClient chatClient = ChatClient.builder(openAiChatModel)
                 .defaultSystem(role)
                 .defaultAdvisors(messageChatMemoryAdvisor)
@@ -110,30 +130,68 @@ public class ChatController {
 //    @GetMapping(value = "/stream",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Messages chat(@RequestParam(value = "message",defaultValue = "你是谁") String message,
                              @RequestParam String sessionId,
-                             String scriptName,
+                             @RequestParam String scriptName,
                              @RequestParam String role,
                              HttpServletRequest request) {
+        log.info("[AiResponse]剧本名称是:" + scriptName);
         Scripts scripts = cluesService.getScriptsByScriptName(scriptName);
+        if(scripts == null) {
+            return null;
+        }
+        log.info("[AiResponse]润色之前的角色信息是:" + role);
         List<Clues> clues = cluesService.getCluesBySessionId(Integer.parseInt(sessionId));
-        role = " 你是一个智能剧本杀引导助手，这个剧情是："+role + ",剧情的结果是" + scripts.getResult() +
-                ",你需要先向用户介绍这个剧情，然后问用户是否想开始游戏，并且你只能问一次，不能问第二次，你应该记住你之前说的什么，" +
-                "你要根据用户的具体回复来智能判断用户是否选择开始，比如用户回复好，那么代表准备好了，或者回复是的也是准备好了，你要聪明一点，" +
-                "不要一直问有没有准备好，" +
-                "面对用户的无理要求，你应尽量回应但还是要回到剧本杀上来，之后你需要根据用户的消息智能决断剧情的走向，当你认为剧情结束了，那么你应该返回剧情结束" +
-                "你必须严格返回剧情结束这四个字，字符串，不能带任何格式，不能带markdown，" +
-                "但是你和用户交互是允许markdwon并且鼓励使用markdown的，此外你还需要分析这个剧情的线索" +
-                "线索是" + clues + "，你需要根据用户的行为决定是否解锁这个线索，难度不应该太高，当用户的选择和这个线索有关的时候你就应该发送解锁线索的信息了，" +
-                "你不能等用户说解锁线索你才解锁，这是严格禁止的，即使用户回复的是数字你也应该根据这个数字对应的内容判断用户是否解锁线索，" +
-                "如果线索一旦解锁，那么你应该返回的格式是：解锁线索: + '线索的名称'，必须严格返回字符串，线索名称两边的单引号一定不能少，必须有," +
-                "在游戏过程中你应该提供1，2，3这样的选项让用户选择，你应该根据线索和剧本内容来推进游戏";
+        log.info("[AiResponse]线索是:" + clues);
+        role = "你是一个智能剧本杀引导助手，负责引导用户完成剧情。以下是你的任务和规则：" +
+                "\n\n### 1. 剧情设置" +
+                "\n- **剧情背景**：剧情基于以下内容：'" + role + "'。" +
+                "\n- **剧情结果**：最终结局为 '" + scripts.getResult() + "'。" +
+                "\n- **剧本内容**：围绕 '" + scripts.getScriptContent() + "' 展开。" +
+                "\n- **线索**：严格基于以下线索：'" + clues + "'，禁止自行添加线索。" +
+                "\n\n### 2. 游戏引导" +
+                "\n- **初始交互**：" +
+                "\n  - 首次交互时，向用户介绍剧情背景，并询问是否开始游戏，仅询问一次，禁止重复询问。" +
+                "\n  - 使用 Markdown 格式与用户交互，增强可读性和吸引力。" +
+                "\n- **用户意图判断**：" +
+                "\n  - 根据用户回复智能判断是否准备开始，例如回复“好”、“是的”表示准备好。" +
+                "\n  - 对用户的不合理要求（如偏离剧本），礼貌回应后引导回剧情。" +
+                "\n- **剧情推进**：" +
+                "\n  - 根据 '" + scripts.getScriptContent() + "'、'" + scripts.getResult() + "' 和 '" + clues + "' 推进剧情。" +
+                "\n  - 提供多样化的选择选项（如 1、2、3 或更多/更少选项），选项内容基于线索和剧本。" +
+                "\n  - 若对话陷入死循环，主动提供线索并继续推进剧情。" +
+                "\n  - 禁止重新开始游戏，除非用户明确要求。" +
+                "\n\n### 3. 线索管理" +
+                "\n- **解锁条件**：" +
+                "\n  - 根据用户行为和回复判断是否解锁线索，难度适中，不得要求用户明确说“解锁线索”。" +
+                "\n  - 当用户选择或回复与线索相关时（包括数字选项对应的内容），立即解锁相关线索。" +
+                "\n- **解锁格式**：" +
+                "\n  - 解锁时返回严格字符串：`解锁线索: '线索名称'`，线索名称必须带单引号，禁止使用 Markdown（如 `**解锁线索**`）。" +
+                "\n  - 示例：`解锁线索: '詹姆斯的日记'`。" +
+                "\n- **线索限制**：" +
+                "\n  - 仅使用 '" + clues + "' 提供的线索，禁止添加新线索。" +
+                "\n\n### 4. 交互规则" +
+                "\n- **记忆功能**：" +
+                "\n  - 记住之前的对话内容，避免重复询问或矛盾。" +
+                "\n- **选项设计**：" +
+                "\n  - 提供基于剧本和线索的交互选项，鼓励用户选择编号或自行输入对话。" +
+                "\n  - 若涉及与角色交谈，提醒用户可选择提供的对话或输入自定义内容。" +
+                "\n- **结束条件**：" +
+                "\n  - 当剧情推理完成时，返回严格字符串：`剧情结束`，禁止添加格式或 Markdown。" +
+                "\n\n### 5. 总体要求" +
+                "\n- 保持智能、灵活的交互，围绕 '" + scripts.getScriptContent() + "' 和 '" + scripts.getResult() + "' 推进游戏。" +
+                "\n- 持续推进剧情直到推理结束，确保用户体验流畅且符合剧本逻辑。";
         log.info("[AiResponse]角色信息是:" + role);
         log.info("会话id:" + sessionId);
         Messages messages = new Messages();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("session_user_key");
+        Messages notLogin = new Messages();
+        notLogin.setMessage("请先登录");
+        if(user == null) {
+            return notLogin;
+        }
         log.info("[AiResponse]用户名为:"+user.getUserName()+"，发送的消息为:"+message);
         String senderType = "agent";
-        var messageChatMemoryAdvisor = new MessageChatMemoryAdvisor(chatMemory,sessionId,1000);
+        var messageChatMemoryAdvisor = new MessageChatMemoryAdvisor(chatMemory,sessionId,10000);
         ChatClient chatClient = ChatClient.builder(openAiChatModel)
                 .defaultSystem(role)
                 .defaultAdvisors(messageChatMemoryAdvisor)
@@ -193,18 +251,37 @@ public class ChatController {
     }
 
     // 提取线索名称
+    // 提取线索名称
     private String extractClueName(String result) {
-        // 查找 "解锁线索: '线索名称'" 格式
-        String prefix = "解锁线索: '";
-        int startIndex = result.indexOf(prefix);
+        // 定义可能的线索前缀，包含 Markdown 和非 Markdown 格式
+        String[] prefixes = {
+                "解锁线索: '",        // 标准格式
+                "**解锁线索**: '"     // Markdown 格式
+        };
+
+        int startIndex = -1;
+        String matchedPrefix = null;
+
+        // 尝试匹配任一前缀
+        for (String prefix : prefixes) {
+            startIndex = result.indexOf(prefix);
+            if (startIndex != -1) {
+                matchedPrefix = prefix;
+                break;
+            }
+        }
+
         if (startIndex == -1) {
             throw new IllegalArgumentException("无效的线索解锁格式: " + result);
         }
-        startIndex += prefix.length();
+
+        // 从前缀结束位置开始提取线索名称
+        startIndex += matchedPrefix.length();
         int endIndex = result.indexOf("'", startIndex);
         if (endIndex == -1) {
             throw new IllegalArgumentException("线索名称缺少结束单引号: " + result);
         }
+
         return result.substring(startIndex, endIndex);
     }
 
