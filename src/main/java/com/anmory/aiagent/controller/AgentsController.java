@@ -21,7 +21,7 @@ public class AgentsController {
     AgentsService agentsService;
     @RequestMapping("/getAllAgentsOfScript")
     public List<Agents> getAllAgentsOfScript(int scriptId) {
-        return agentsService.getAllAgentsOfScript(scriptId);
+        return agentsService.getAllAgentsOfScript(scriptId) == null ? null : agentsService.getAllAgentsOfScript(scriptId);
     }
 
     @RequestMapping("/deleteAgents")

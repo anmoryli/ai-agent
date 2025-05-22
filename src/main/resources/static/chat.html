@@ -53,6 +53,12 @@
             </div>
 
             <div class="input-container">
+<!--                增加下拉框选择模型，接口为/agents/chooseAgent,具体模型是动态加载-->
+                <div class="model-select">
+                    <select id="model-select">
+                        <option value="">请选择模型</option>
+                    </select>
+                </div>
                 <textarea id="message-input" placeholder="输入消息..." rows="1"></textarea>
                 <button id="send-btn" class="btn btn-primary">
                     <span class="icon-send"></span>

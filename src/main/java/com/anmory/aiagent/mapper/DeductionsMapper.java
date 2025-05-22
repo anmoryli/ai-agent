@@ -1,6 +1,7 @@
 package com.anmory.aiagent.mapper;
 
 import com.anmory.aiagent.model.Deductions;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -21,4 +22,7 @@ public interface DeductionsMapper {
 
     @Select("select * from `ai-agent`.deductions where session_id = #{sessionId}")
     List<Deductions> getDeductionsBySessionId(int sessionId);
+
+    @Delete("delete from `ai-agent`.deductions where session_id = #{sessionId}")
+    int deleteDeductions(int sessionId);
 }

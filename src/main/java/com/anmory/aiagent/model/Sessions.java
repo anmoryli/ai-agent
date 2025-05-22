@@ -16,6 +16,7 @@ public class Sessions {
     private int userId;
     private int scriptId;
     private String title;
+    private String imgUrl;
     private Date createTime;
     private Date updateTime;
 }

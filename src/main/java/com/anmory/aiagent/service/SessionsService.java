@@ -37,4 +37,12 @@ public class SessionsService {
     public int deleteSession(int sessionId) {
         return sessionsMapper.deleteSession(sessionId);
     }
+
+    public Sessions getSessionById(int sessionId) {
+        return sessionsMapper.getSessionById(sessionId);
+    }
+
+    public int updateSessionImgUrl(int sessionId, String imgUrl) {
+        return sessionsMapper.updateSessionImgUrl(sessionId, imgUrl);
+    }
 }

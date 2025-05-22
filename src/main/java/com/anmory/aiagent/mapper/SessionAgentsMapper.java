@@ -1,6 +1,7 @@
 package com.anmory.aiagent.mapper;
 
 import com.anmory.aiagent.model.SessionAgents;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -22,4 +23,7 @@ public interface SessionAgentsMapper {
 
     @Select("select * from `ai-agent`.session_agents where session_id = #{sessionId}")
     List<SessionAgents> getAllSessionAgents(int sessionId);
+
+    @Delete("delete from `ai-agent`.session_agents where session_id = #{sessionId}")
+    int deleteBySessionId(int sessionId);
 }

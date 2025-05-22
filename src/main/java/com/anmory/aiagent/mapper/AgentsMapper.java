@@ -25,10 +25,9 @@ public interface AgentsMapper {
     @Select("select * from `ai-agent`.agents order by agent_id desc limit 1")
     Agents getLastAgentId();
 
-    @Select("select * from agents " +
-            "join `ai-agent`.session_agents on agents.agent_id = session_agents.agent_id " +
-            "join sessions on session_agents.session_id = sessions.session_id " +
-            "join `ai-agent`.scripts on scripts.session_id = sessions.session_id")
+    @Select("select * from `ai-agent`.agents " +
+            "join `ai-agent`.scripts_agents on agents.agent_id = scripts_agents.agent_id " +
+            "where scripts_agents.script_id = #{scriptId}")
     List<Agents> getAllAgentsOfScript(int scriptId);
 
     @Select("select * from agents")

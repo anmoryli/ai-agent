@@ -26,6 +26,10 @@ public class SessionAgentsService {
         return sessionAgentsMapper.getLastSessionAgentId();
     }
 
+    public int deleteBySessionId(int sessionId) {
+        return sessionAgentsMapper.deleteBySessionId(sessionId);
+    }
+
     public List<SessionAgents> getAllSessionAgents(int sessionId) {
         return sessionAgentsMapper.getAllSessionAgents(sessionId);
     }

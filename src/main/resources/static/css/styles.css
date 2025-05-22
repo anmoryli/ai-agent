@@ -1926,3 +1926,149 @@ input:checked + .theme-switch-label:before {
   background-color: #ff1a1a;
 }
 
+.clue-item {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+.clue-item h4 {
+  margin: 0 0 5px;
+  font-size: 1.2em;
+}
+.clue-item p {
+  margin: 5px 0;
+}
+
+.selected-agents-list {
+  margin-top: 10px;
+  max-height: 100px;
+  overflow-y: auto;
+}
+.agent-select-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.agent-select-item input {
+  margin-right: 10px;
+}
+
+.add-agents-to-script-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+}
+.add-agents-to-script-modal .modal-content {
+  background-color: var(--dark-bg);
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 500px;
+}
+.agent-select-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.agent-select-item input {
+  margin-right: 10px;
+}
+.selected-agents-list {
+  margin-top: 10px;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+/* 提高 model-select 容器的特异性 */
+div.model-select {
+  position: relative;
+  width: 220px;
+  margin: 15px 0;
+  font-family: Arial, sans-serif;
+}
+
+/* 下拉框样式 */
+div.model-select #model-select {
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: 500;
+  border: 2px solid #666;
+  border-radius: 6px;
+  background-color: #333333; /* 深灰背景，确保白色文字对比度 */
+  color: #ffffff; /* 文字颜色改为白色 */
+  cursor: pointer;
+  appearance: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease;
+}
+
+/* 下拉框悬停效果 */
+div.model-select #model-select:hover {
+  border-color: #c23757;
+}
+
+/* 暗色主题 */
+body.dark-theme div.model-select #model-select {
+  background-color: #1a1a1a; /* 更深的背景，增强暗色主题对比 */
+  color: #ffffff; /* 保持白色文字 */
+  border-color: #777777;
+}
+
+/* 选项样式 */
+div.model-select #model-select option {
+  background-color: #333333; /* 选项背景为深灰 */
+  color: #ffffff; /* 选项文字为白色 */
+  font-size: 18px;
+  padding: 10px;
+}
+
+/* 暗色主题选项 */
+body.dark-theme div.model-select #model-select option {
+  background-color: #1a1a1a; /* 暗色主题选项背景更深 */
+  color: #ffffff; /* 保持白色文字 */
+}
+
+/* 自定义下拉箭头 */
+div.model-select::after {
+  content: "▼";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #ffffff; /* 箭头改为白色 */
+  pointer-events: none;
+}
+
+/* 暗色主题箭头 */
+body.dark-theme div.model-select::after {
+  color: #ffffff; /* 保持白色箭头 */
+}
+
+/* 禁用状态 */
+div.model-select #model-select:disabled {
+  background-color: #4a4a4a; /* 禁用状态背景稍浅 */
+  color: #aaaaaa; /* 禁用状态文字为浅灰色，避免纯白 */
+  cursor: not-allowed;
+}
+
+.model-select {
+  color: white;
+}
+
+/* 在 styles.css 文件中添加或修改以下样式 */
+.model-select #model-select {
+  color: #ffffff; /* 确保文字颜色为白色 */
+}
+
+.model-select #model-select option {
+  color: #ffffff; /* 确保选项文字颜色为白色 */
+}

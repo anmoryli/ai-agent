@@ -31,6 +31,10 @@ public class CluesService {
         return clusterMapper.updateLock(clueId);
     }
 
+    public int deleteCluesByScriptId(int scriptId) {
+        return clusterMapper.deleteCluesByScriptId(scriptId);
+    }
+
     public Clues getCluesByName(String clueName) {
         return clusterMapper.getCluesByName(clueName);
     }

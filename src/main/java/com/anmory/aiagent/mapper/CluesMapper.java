@@ -2,6 +2,7 @@ package com.anmory.aiagent.mapper;
 
 import com.anmory.aiagent.model.Clues;
 import com.anmory.aiagent.model.Scripts;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -40,4 +41,7 @@ public interface CluesMapper {
 
     @Select("select * from `ai-agent`.scripts where script_name = #{scriptName} limit 1")
     Scripts getScriptsByScriptName(String scriptName);
+
+    @Delete("delete from `ai-agent`.clues where script_id = #{scriptId}")
+    int deleteCluesByScriptId(int scriptId);
 }

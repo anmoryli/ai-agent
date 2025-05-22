@@ -27,4 +27,11 @@ public interface SessionsMapper {
 
     @Delete("delete from sessions where session_id = #{sessionId}")
     int deleteSession(int sessionId);
+
+    @Select("select * from `ai-agent`.sessions where session_id = #{sessionId}")
+    Sessions getSessionById(int sessionId);
+
+    @Update("update `ai-agent`.sessions set `ai-agent`.sessions.img_url = #{imgUrl} " +
+            "where `ai-agent`.sessions.session_id=#{sessionId}")
+    int updateSessionImgUrl(int sessionId, String imgUrl);
 }

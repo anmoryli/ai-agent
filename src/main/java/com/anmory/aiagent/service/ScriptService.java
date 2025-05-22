@@ -30,8 +30,8 @@ public class ScriptService {
         return scriptsMapper.getScripts();
     }
 
-    public int insertScripts(int sessionId, String scriptName, String scriptContent, String result) {
-        return scriptsMapper.insertScripts(sessionId, scriptName, scriptContent, result);
+    public int insertScripts(String scriptName, String scriptContent, String result) {
+        return scriptsMapper.insertScripts(scriptName, scriptContent, result);
     }
 
     public int deleteScript(String scriptName) {

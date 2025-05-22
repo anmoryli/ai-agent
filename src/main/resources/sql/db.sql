@@ -36,6 +36,7 @@ create table sessions(
                          session_id int auto_increment primary key not null ,
                          user_id int not null ,
                          title varchar(200),
+                         img_url varchar(200),
                          create_time datetime default now(),
                          update_time datetime on update now(),
                          foreign key (user_id) references user_info(user_id)
@@ -45,25 +46,42 @@ create table sessions(
 drop table if exists scripts;
 CREATE TABLE IF NOT EXISTS scripts (
                                        script_id INT AUTO_INCREMENT NOT NULL,
-                                       session_id INT NOT NULL,
                                        script_name VARCHAR(200) UNIQUE,
                                        script_content TEXT,
                                        result TEXT NOT NULL,
                                        create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
                                        update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                       PRIMARY KEY (script_id),
-                                       UNIQUE (script_id, session_id),
-                                       FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+                                       PRIMARY KEY (script_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+drop table if exists scripts_sessions;
+create table scripts_sessions(
+    script_id int not null ,
+    session_id int not null ,
+    joined_time datetime default now(),
+    primary key (script_id, session_id),
+    foreign key (script_id) references scripts(script_id),
+    foreign key (session_id) references sessions(session_id)
+);
+
+drop table if exists scripts_agents;
+create table scripts_agents(
+    script_id int not null ,
+    agent_id int not null ,
+    joined_time datetime default now(),
+    primary key (script_id, agent_id),
+    foreign key (script_id) references scripts(script_id),
+    foreign key (agent_id) references agents(agent_id)
+);
 
 drop table if exists session_agents;
 create table session_agents(
-    session_id int not null ,
-    agent_id int not null ,
-    joined_time datetime default now(),
-    primary key (session_id, agent_id),
-    foreign key (session_id) references sessions(session_id),
-    foreign key (agent_id) references agents(agent_id)
+                               session_id int not null ,
+                               agent_id int not null ,
+                               joined_time datetime default now(),
+                               primary key (session_id, agent_id),
+                               foreign key (session_id) references `ai-agent`.sessions(session_id),
+                               foreign key (agent_id) references agents(agent_id)
 );
 
 drop table if exists messages;
@@ -165,8 +183,8 @@ INSERT INTO agents (user_id, agent_name, agent_role, description, own_by) VALUES
                                                                               (1, '莉莉·摩根', '庄园女仆', '行为神秘，似乎知道庄园主人的秘密。', 'user');
 
 -- 插入剧本
-INSERT INTO scripts (session_id, script_name, script_content, result) VALUES
-    (1, '午夜庄园谋杀案',
+INSERT INTO scripts (script_name, script_content, result) VALUES
+    ('午夜庄园谋杀案',
      '1925年5月15日晚，庄园主人亨利·卡特在书房被发现死亡，胸口插着一把匕首。宾客们被困在庄园，暴风雨切断了对外联系。玩家需通过线索和对话找出真凶。',
      '真凶是詹姆斯·布莱克。他因多年前与亨利的商业纠纷怀恨在心，趁晚宴后潜入书房，用匕首杀害了亨利。动机是报复和掩盖亨利即将公开的丑闻。');
 

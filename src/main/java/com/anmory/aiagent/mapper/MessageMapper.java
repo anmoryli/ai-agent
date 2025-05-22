@@ -1,6 +1,7 @@
 package com.anmory.aiagent.mapper;
 
 import com.anmory.aiagent.model.Messages;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -23,4 +24,7 @@ public interface MessageMapper {
 
     @Select("select * from `ai-agent`.messages where session_id = #{sessionId} and sender_id = #{senderId}")
     List<Messages> getHistoryBySessionIdAndSenderId(int sessionId, int senderId);
+
+    @Delete("delete from `ai-agent`.messages where session_id = #{sessionId}")
+    int deleteBySessionId(int sessionId);
 }

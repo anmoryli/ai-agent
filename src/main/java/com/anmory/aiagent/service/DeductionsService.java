@@ -25,4 +25,8 @@ public class DeductionsService {
     public List<Deductions> getDeductionsBySessionId(int sessionId) {
         return deductionsMapper.getDeductionsBySessionId(sessionId);
     }
+
+    public int deleteDeductions(int deductionId) {
+        return deductionsMapper.deleteDeductions(deductionId);
+    }
 }

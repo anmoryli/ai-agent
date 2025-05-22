@@ -1,9 +1,7 @@
 package com.anmory.aiagent.controller;
 
-import com.anmory.aiagent.model.Clues;
-import com.anmory.aiagent.model.Messages;
-import com.anmory.aiagent.model.Scripts;
-import com.anmory.aiagent.model.User;
+import com.anmory.aiagent.model.*;
+import com.anmory.aiagent.service.AgentsService;
 import com.anmory.aiagent.service.CluesService;
 import com.anmory.aiagent.service.MessageService;
 import com.anmory.aiagent.service.MessageSingleService;
@@ -40,6 +38,8 @@ public class ChatController {
     CluesService cluesService;
     @Autowired
     MessageSingleService messageSingleService;
+    @Autowired
+    AgentsService agentsService;
 
     private final OpenAiChatModel openAiChatModel;
 
@@ -51,7 +51,7 @@ public class ChatController {
     @ResponseBody
     @GetMapping(value = "/chatSingle",produces = MediaType.APPLICATION_JSON_VALUE)
 //    @GetMapping(value = "/stream",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Messages chatSingle(@RequestParam(value = "message",defaultValue = "你是谁") String message,
+    public MessageSingle chatSingle(@RequestParam(value = "message",defaultValue = "你是谁") String message,
                          @RequestParam String sessionId,
                          @RequestParam String role,
                          @RequestParam String conId,
@@ -78,7 +78,7 @@ public class ChatController {
                 "\n- 提供沉浸式的角色扮演体验，让用户感觉与 '" + role + "' 真实互动。" +
                 "\n- 保持对话流畅、引人入胜，优先考虑用户体验和角色一致性。";
         log.info("会话id:" + sessionId);
-        Messages messages = new Messages();
+        MessageSingle messages = new MessageSingle();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("session_user_key");
         log.info("[AiResponse]用户名为:"+user.getUserName()+"，发送的消息为:"+message);
@@ -113,12 +113,13 @@ public class ChatController {
             }
         }
         messageSingleService.insert(user.getUserId(),Integer.parseInt(conId),result);
-        Messages lastMessage = messageService.getLastMessageId();
+        MessageSingle lastMessage = messageSingleService.getLastMessageId();
+        if(lastMessage == null) {
+            return null;
+        }
         messages.setMessageId(lastMessage.getMessageId());
         messages.setSenderId(user.getUserId());
         messages.setMessage(result);
-        messages.setSenderType(senderType);
-        messages.setSessionId(Integer.parseInt(sessionId));
         messages.setCreateTime(lastMessage.getCreateTime());
         messages.setUpdateTime(lastMessage.getUpdateTime());
         System.out.println(messages);
@@ -129,19 +130,34 @@ public class ChatController {
     @GetMapping(value = "/chat",produces = MediaType.APPLICATION_JSON_VALUE)
 //    @GetMapping(value = "/stream",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Messages chat(@RequestParam(value = "message",defaultValue = "你是谁") String message,
+                             @RequestParam int agentId,
                              @RequestParam String sessionId,
                              @RequestParam String scriptName,
                              @RequestParam String role,
                              HttpServletRequest request) {
+        if(agentId == 0) {
+            role = "你是一个引导助手";
+        }
+        Agents agents = agentsService.getAgentById(agentId);
+        Agents guide = new Agents();
+        if(agents == null) {
+            guide.setAgentId(0);
+            guide.setAgentRole("你的任务是引导用户完成剧情。");
+            guide.setAgentName("引导助手");
+            guide.setDescription("你的任务是引导用户完成剧情。");
+            agents = guide;
+        }
+        log.info("[AiResponse]用户选择的角色是:" + agents.getAgentName());
+        role += "你的名字是" + agents.getAgentName() == null + "，" + agents.getAgentRole();
         log.info("[AiResponse]剧本名称是:" + scriptName);
         Scripts scripts = cluesService.getScriptsByScriptName(scriptName);
         if(scripts == null) {
             return null;
         }
         log.info("[AiResponse]润色之前的角色信息是:" + role);
-        List<Clues> clues = cluesService.getCluesBySessionId(Integer.parseInt(sessionId));
+        List<Clues> clues = cluesService.getCluesByScriptId(scripts.getScriptId());
         log.info("[AiResponse]线索是:" + clues);
-        role = "你是一个智能剧本杀引导助手，负责引导用户完成剧情。以下是你的任务和规则：" +
+        role += "你是一个智能剧本杀引导助手，负责引导用户完成剧情。以下是你的任务和规则：" +
                 "\n\n### 1. 剧情设置" +
                 "\n- **剧情背景**：剧情基于以下内容：'" + role + "'。" +
                 "\n- **剧情结果**：最终结局为 '" + scripts.getResult() + "'。" +
@@ -178,7 +194,8 @@ public class ChatController {
                 "\n  - 当剧情推理完成时，返回严格字符串：`剧情结束`，禁止添加格式或 Markdown。" +
                 "\n\n### 5. 总体要求" +
                 "\n- 保持智能、灵活的交互，围绕 '" + scripts.getScriptContent() + "' 和 '" + scripts.getResult() + "' 推进游戏。" +
-                "\n- 持续推进剧情直到推理结束，确保用户体验流畅且符合剧本逻辑。";
+                "\n- 持续推进剧情直到推理结束，确保用户体验流畅且符合剧本逻辑。" +
+                "你可能会遇到多次角色互换的情况，请见机行事";
         log.info("[AiResponse]角色信息是:" + role);
         log.info("会话id:" + sessionId);
         Messages messages = new Messages();

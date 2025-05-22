@@ -29,4 +29,8 @@ public class MessageService {
     public List<Messages> getHistoryBySessionIdAndSenderId(int sessionId, int senderId) {
         return messageMapper.getHistoryBySessionIdAndSenderId(sessionId, senderId);
     }
+
+    public int deleteBySessionId(int sessionId) {
+        return messageMapper.deleteBySessionId(sessionId);
+    }
 }

@@ -1,6 +1,7 @@
 package com.anmory.aiagent.service;
 
 import com.anmory.aiagent.mapper.MessageSingleMapper;
+import com.anmory.aiagent.model.MessageSingle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +18,9 @@ public class MessageSingleService {
 
     public int insert(int senderId, int receiverId, String message) {
         return messageSingleMapper.insert(senderId, receiverId, message);
+    }
+
+    public MessageSingle getLastMessageId() {
+        return messageSingleMapper.getLastMessageId();
     }
 }
